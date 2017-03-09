@@ -23,7 +23,7 @@ public class ArticlePreview {
     private String ga_prefix;
     private int type;
     private int id;
-    @BindImageView(id=R.id.iv_image)
+    @BindImageView(id=R.id.iv_image, placeHolder=R.mipmap.ic_launcher)
     private String image = "http://p1.zhimg.com/45/b9/45b9f057fc1957ed2c946814342c0f02.jpg";
 
     public String getTitle() {

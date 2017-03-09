@@ -1,19 +1,25 @@
 package com.fashare.no_view_holder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.fashare.no_view_holder.annotation.BindImageView;
+import com.fashare.no_view_holder.annotation.BindListView;
+import com.fashare.no_view_holder.annotation.BindRecyclerView;
 import com.fashare.no_view_holder.annotation.BindTextView;
+import com.fashare.no_view_holder.annotation.BindViewPager;
+import com.fashare.no_view_holder.annotation.click.BindClick;
+import com.fashare.no_view_holder.annotation.click.BindItemClick;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.ButterKnife;
 
@@ -23,72 +29,60 @@ import butterknife.ButterKnife;
 public abstract class NoViewHolder<T> extends RecyclerView.ViewHolder {
     protected final String TAG = this.getClass().getSimpleName();
 
-    public NoViewHolder(View itemView) {
+    private static final List<? extends IBehavior<? extends Annotation>> sDataBehaviors = Arrays.asList(
+            new BindTextView.Behavior(),
+            new BindImageView.Behavior(),
+            new BindRecyclerView.Behavior(),
+            new BindViewPager.Behavior(),
+            new BindListView.Behavior()
+    );
+
+    private static final List<? extends IBehavior<? extends Annotation>> sClickBehaviors = Arrays.asList(
+            new BindItemClick.Behavior(),
+            new BindClick.Behavior()
+    );
+
+    private NoViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    public abstract void onBind(T data, int pos);
+    public void bind(T data){
+        bind(data, 0);
+    }
 
-    public abstract void onRecycled();
+    public void bind(T data, int pos){
+        onBind(data, pos);
+    }
+
+    protected abstract void onBind(T data, int pos);
 
     public static class Factory{
+        public static <T> NoViewHolder<T> create(Activity activity){
+            return create(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0));
+        }
+
         public static <T> NoViewHolder<T> create(final Context context, @LayoutRes int layoutRes, ViewGroup parent){
-            return new NoViewHolder<T>(LayoutInflater.from(context).inflate(layoutRes, parent, false)) {
-                protected final String TAG = "NoViewHolder.Factory";
+            return create(LayoutInflater.from(context).inflate(layoutRes, parent, false));
+        }
 
+        public static <T> NoViewHolder<T> create(View itemView){
+            return new NoViewHolder<T>(itemView) {
                 @Override
-                public void onBind(T data, int pos) {
-                    Class<T> dataClazz = (Class<T>)data.getClass();
-                    Log.d(TAG, "dataClazz:" + dataClazz);
-                    Field[] fields = dataClazz.getDeclaredFields();
-                    for (Field field : fields) {
-                        field.setAccessible(true);
-                        try {
-                            Log.d(TAG, "name:" + field.getName() + ", value:" + field.get(data));
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                        if(field.getAnnotation(BindTextView.class) != null){
-                            Log.d(TAG, String.format("%s.%s which annotated be BindTextView must be String!!!", dataClazz.getSimpleName(), field.getName()));
-                            BindTextView bindTextView = field.getAnnotation(BindTextView.class);
-                            try {
-                                field.setAccessible(true);
-                                Object text = field.get(data);
-                                if(text instanceof String) {
-                                    ((TextView) itemView.findViewById(bindTextView.id())).setText((String) text);
-                                }else
-                                    throw new IllegalStateException(String.format("%s.%s which annotated be BindTextView must be String!!!", dataClazz.getSimpleName(), field.getName()));
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }else if(field.getAnnotation(BindImageView.class) != null){
-                            Log.d(TAG, String.format("%s.%s which annotated be BindImageView must be String!!!", dataClazz.getSimpleName(), field.getName()));
-                            BindImageView bindImageView = field.getAnnotation(BindImageView.class);
-                            try {
-                                field.setAccessible(true);
-                                Object imgUrl = field.get(data);
-                                if(imgUrl instanceof String) {
-                                    ImageLoader.loadImage((ImageView) itemView.findViewById(bindImageView.id()),
-                                            (String)imgUrl,
-                                            bindImageView.placeHolder()
-                                    );
-
-                                }else
-                                    throw new IllegalStateException(String.format("%s.%s which annotated be BindImageView must be String!!!", dataClazz.getSimpleName(), field.getName()));
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-
+                protected void onBind(T data, int pos) {
+                    for (Field field : data.getClass().getDeclaredFields()) {
+                        for (IBehavior<? extends Annotation> behavior : NoViewHolder.sDataBehaviors) {
+                            if(behavior.isApplyedOn(field))
+                                behavior.onBind(itemView, field, data);
                         }
                     }
-                }
 
-                @Override
-                public void onRecycled() {
-
+                    for (Field field : data.getClass().getDeclaredFields()) {
+                        for (IBehavior<? extends Annotation> behavior : NoViewHolder.sClickBehaviors) {
+                            if(behavior.isApplyedOn(field))
+                                behavior.onBind(itemView, field, data);
+                        }
+                    }
                 }
             };
         }

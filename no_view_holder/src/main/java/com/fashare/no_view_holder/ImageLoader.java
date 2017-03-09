@@ -68,7 +68,7 @@ public class ImageLoader {
 //			@Override
 //			public void onLoadingComplete(String s, View view, Bitmap bitmap) {
 //				if (callback != null) {
-//					callback.callAfterImgDownloaded(bitmap);
+//					callback.onLoadingComplete(bitmap);
 //				}
 //			}
 //
@@ -95,7 +95,7 @@ public class ImageLoader {
                     public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                         super.onResourceReady(bitmap, glideAnimation);
                         if (callback != null) {
-                            callback.callAfterImgDownloaded(bitmap);
+                            callback.onLoadingComplete(bitmap);
                         }
                     }
                 });
@@ -158,13 +158,13 @@ public class ImageLoader {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                         if (callback != null) {
-                            callback.callAfterImgDownloaded(bitmap);
+                            callback.onLoadingComplete(bitmap);
                         }
                     }
                 });
     }
 
     public interface Callback {
-        public void callAfterImgDownloaded(Bitmap bitmap);
+        void onLoadingComplete(Bitmap bitmap);
     }
 }

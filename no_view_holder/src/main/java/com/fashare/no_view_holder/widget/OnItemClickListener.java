@@ -1,4 +1,4 @@
-package com.fashare.noviewholder;
+package com.fashare.no_view_holder.widget;
 
 import android.view.View;
 
