@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/NoViewHolder.iml" filepath="$PROJECT_DIR$/NoViewHolder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/no_view_holder/no_view_holder.iml" filepath="$PROJECT_DIR$/no_view_holder/no_view_holder.iml" />
+    </modules>
+  </component>
+</project>
