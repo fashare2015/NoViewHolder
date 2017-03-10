@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -49,7 +50,7 @@ public class NoRecyclerViewAdapter<T> extends RecyclerView.Adapter<NoViewHolder<
 
     @Override
     public NoViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType) {
-        return NoViewHolder.Factory.create(mContext, mLayoutRes, parent);
+        return NoViewHolder.Factory.create(LayoutInflater.from(mContext).inflate(mLayoutRes, parent, false));
     }
 
     @Override

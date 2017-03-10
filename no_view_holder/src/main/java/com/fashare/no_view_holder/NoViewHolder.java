@@ -1,10 +1,7 @@
 package com.fashare.no_view_holder;
 
 import android.app.Activity;
-import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,12 +18,10 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by jinliangshan on 17/3/9.
  */
-public abstract class NoViewHolder<T> extends RecyclerView.ViewHolder {
+public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
     protected final String TAG = this.getClass().getSimpleName();
 
     private static final List<? extends IBehavior<? extends Annotation>> sDataBehaviors = Arrays.asList(
@@ -42,9 +37,12 @@ public abstract class NoViewHolder<T> extends RecyclerView.ViewHolder {
             new BindClick.Behavior()
     );
 
-    private NoViewHolder(View itemView) {
+    private final Object mClickHolder;
+
+    private NoViewHolder(View itemView, Object clickHolder) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        mClickHolder = clickHolder;
+        onBindClick(clickHolder);
     }
 
     public void notifyDataSetChanged(T dataHolder){
@@ -53,38 +51,38 @@ public abstract class NoViewHolder<T> extends RecyclerView.ViewHolder {
 
     public void notifyDataSetChanged(T dataHolder, int pos){
         onBind(dataHolder, pos);
+        onBindClick(mClickHolder);
     }
 
-    protected abstract void onBind(T dataHolder, int pos);
+    private void onBind(T dataHolder, int pos) {
+        for (Field field : dataHolder.getClass().getDeclaredFields()) {
+            for (IBehavior<? extends Annotation> behavior : NoViewHolder.sDataBehaviors) {
+                if(behavior.isApplyedOn(field))
+                    behavior.onBind(itemView, field, dataHolder);
+            }
+        }
+    }
+
+    private void onBindClick(Object clickHolder){
+        for (Field field : clickHolder.getClass().getDeclaredFields()) {
+            for (IBehavior<? extends Annotation> behavior : NoViewHolder.sClickBehaviors) {
+                if(behavior.isApplyedOn(field))
+                    behavior.onBind(itemView, field, clickHolder);
+            }
+        }
+    }
 
     public static class Factory{
         public static <T> NoViewHolder<T> create(Activity activity){
-            return create(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0));
-        }
-
-        public static <T> NoViewHolder<T> create(final Context context, @LayoutRes int layoutRes, ViewGroup parent){
-            return create(LayoutInflater.from(context).inflate(layoutRes, parent, false));
+            return create(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0), activity);
         }
 
         public static <T> NoViewHolder<T> create(View itemView){
-            return new NoViewHolder<T>(itemView) {
-                @Override
-                protected void onBind(T dataHolder, int pos) {
-                    for (Field field : dataHolder.getClass().getDeclaredFields()) {
-                        for (IBehavior<? extends Annotation> behavior : NoViewHolder.sDataBehaviors) {
-                            if(behavior.isApplyedOn(field))
-                                behavior.onBind(itemView, field, dataHolder);
-                        }
-                    }
+            return create(itemView, itemView);
+        }
 
-                    for (Field field : dataHolder.getClass().getDeclaredFields()) {
-                        for (IBehavior<? extends Annotation> behavior : NoViewHolder.sClickBehaviors) {
-                            if(behavior.isApplyedOn(field))
-                                behavior.onBind(itemView, field, dataHolder);
-                        }
-                    }
-                }
-            };
+        public static <T> NoViewHolder<T> create(View itemView, Object clickHolder){
+            return new NoViewHolder<>(itemView, clickHolder);
         }
     }
 }

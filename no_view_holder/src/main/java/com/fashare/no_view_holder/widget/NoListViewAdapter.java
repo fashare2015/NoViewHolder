@@ -3,6 +3,7 @@ package com.fashare.no_view_holder.widget;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -53,8 +54,8 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
     public View getView(int position, View convertView, ViewGroup parent) {
         NoViewHolder<T> viewHolder;
         if (convertView == null) {
-            viewHolder = NoViewHolder.Factory.create(getContext(), mLayoutRes, parent);
-            convertView = viewHolder.itemView;
+            convertView = LayoutInflater.from(getContext()).inflate(mLayoutRes, parent, false);
+            viewHolder = NoViewHolder.Factory.create(convertView);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (NoViewHolder<T>) convertView.getTag();

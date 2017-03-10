@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -78,7 +79,7 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
 
     protected final NoViewHolder<T> createViewHolder(ViewGroup container) {
         NoViewHolder<T> viewHolder;
-        viewHolder = NoViewHolder.Factory.create(mContext, mLayoutRes, container);
+        viewHolder = NoViewHolder.Factory.create(LayoutInflater.from(mContext).inflate(mLayoutRes, container, false));
 
         if(viewHolder != null) {
             container.addView(viewHolder.itemView);

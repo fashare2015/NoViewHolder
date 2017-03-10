@@ -43,17 +43,20 @@ public @interface BindItemClick {
             if(view instanceof ListView){
                 ListView lv = (ListView) view;
                 NoListViewAdapter adapter = (NoListViewAdapter) lv.getAdapter();
-                adapter.setOnItemClickListener(value);
+                if(adapter != null)
+                    adapter.setOnItemClickListener(value);
 
             }else if(view instanceof RecyclerView){
                 RecyclerView rv = (RecyclerView) view;
                 NoRecyclerViewAdapter adapter = (NoRecyclerViewAdapter) rv.getAdapter();
-                adapter.setOnItemClickListener(value);
+                if(adapter != null)
+                    adapter.setOnItemClickListener(value);
 
             }else if(view instanceof ViewPager){
                 ViewPager vp = (ViewPager) view;
                 NoViewPagerAdapter adapter = (NoViewPagerAdapter) vp.getAdapter();
-                adapter.setOnItemClickListener(value);
+                if(adapter != null)
+                    adapter.setOnItemClickListener(value);
 
             }else{
                 throw new UnsupportedOperationException(String.format("Field[%s] which annotated by %s must instance of %s、%s or %s!!!",
