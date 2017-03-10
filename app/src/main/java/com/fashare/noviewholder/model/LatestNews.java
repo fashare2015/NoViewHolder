@@ -1,5 +1,9 @@
 package com.fashare.noviewholder.model;
 
+import com.fashare.no_view_holder.annotation.BindRecyclerView;
+import com.fashare.no_view_holder.annotation.BindViewPager;
+import com.fashare.noviewholder.R;
+
 import java.util.List;
 
 /**
@@ -13,31 +17,11 @@ public class LatestNews{
      * top_stories : [{"title":"商场和很多人家里，竹制家具越来越多（多图）","image":"http://p2.zhimg.com/9a/15/9a1570bb9e5fa53ae9fb9269a56ee019.jpg","ga_prefix":"052315","type":0,"id":3930883}]
      */
 
-    private String date = "aaaaa";
-    private List<ArticlePreview> stories;
+    @BindViewPager(id = R.id.vp_banner, layout = R.layout.item_banner)
     private List<TopArticle> top_stories;
 
-    public String getDate() {
-        return date;
-    }
+    @BindRecyclerView(id = R.id.rv_article_list, layout = R.layout.item_article)
+    private List<ArticlePreview> stories;
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public List<ArticlePreview> getStories() {
-        return stories;
-    }
-
-    public void setStories(List<ArticlePreview> stories) {
-        this.stories = stories;
-    }
-
-    public List<TopArticle> getTop_stories() {
-        return top_stories;
-    }
-
-    public void setTop_stories(List<TopArticle> top_stories) {
-        this.top_stories = top_stories;
-    }
+    private String date = "";
 }

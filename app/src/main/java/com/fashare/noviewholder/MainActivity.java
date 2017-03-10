@@ -1,104 +1,85 @@
 package com.fashare.noviewholder;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.fashare.no_view_holder.NoViewHolder;
-import com.fashare.no_view_holder.annotation.BindImageView;
-import com.fashare.no_view_holder.annotation.BindRecyclerView;
-import com.fashare.no_view_holder.annotation.BindViewPager;
-import com.fashare.no_view_holder.annotation.LayoutManager;
-import com.fashare.no_view_holder.annotation.click.BindClick;
 import com.fashare.no_view_holder.annotation.click.BindItemClick;
 import com.fashare.no_view_holder.widget.OnItemClickListener;
 import com.fashare.noviewholder.model.ArticlePreview;
+import com.fashare.noviewholder.model.LatestNews;
+import com.fashare.noviewholder.model.TopArticle;
 
-import java.util.Arrays;
-import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
-
-    @BindImageView(id = R.id.iv, placeHolder = R.mipmap.ic_launcher)
-    String img="";
-
-    @BindClick(id = R.id.iv)
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(MainActivity.this, "click img", Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    @BindViewPager(
-            id = R.id.vp,
-            layout = R.layout.item_article
-    )
-    @BindRecyclerView(
-            id = R.id.rv,
-            layout = R.layout.item_article,
-            layoutManager = @LayoutManager(
-                    style = LayoutManager.Style.STAGGERED_GRID,
-                    spanCount = 2
-            )
-    )
-//    @BindListView(
-//            id = R.id.lv,
-//            layout = R.layout.item_article
-//    )
-    private static final List DATA = Arrays.asList(
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview(),
-            new ArticlePreview()
-    );
+    NoViewHolder mNoViewHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        NoViewHolder.Factory.create(this).notifyDataSetChanged(this);
+        mNoViewHolder = NoViewHolder.Factory.create(this);
+        mSrlRefresh.setOnRefreshListener(reload);
+        loadData();
     }
 
-    @BindItemClick(id = R.id.vp)
-    OnItemClickListener mVpOnItemClick = new OnItemClickListener<ArticlePreview>() {
+    private void loadData() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Api.BASE_URL)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        retrofit.create(Api.class)
+                .getLatestNewsObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<LatestNews>() {
+                    @Override
+                    public void call(LatestNews latestNews) {
+                        mSrlRefresh.setRefreshing(false);
+                        mNoViewHolder.notifyDataSetChanged(latestNews);
+                    }
+                });
+    }
+
+    @BindView(R.id.srl_refresh)
+    SwipeRefreshLayout mSrlRefresh;
+
+    SwipeRefreshLayout.OnRefreshListener reload = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
-        public void onItemClick(View itemView, ArticlePreview data, int position) {
-            Toast.makeText(MainActivity.this, "pos="+position + ", data="+data.getTitle(), Toast.LENGTH_SHORT).show();
+        public void onRefresh() {
+            Toast.makeText(MainActivity.this, "reload", Toast.LENGTH_SHORT).show();
+            loadData();
         }
     };
 
-//    @BindItemClick(id = R.id.lv)
-//    OnItemClickListener mLvOnItemClick = new OnItemClickListener<ArticlePreview>() {
-//        @Override
-//        public void onItemClick(View itemView, ArticlePreview data, int position) {
-//            Toast.makeText(MainActivity.this, "pos="+position + ", data="+data.getTitle(), Toast.LENGTH_SHORT).show();
-//        }
-//    };
+    @BindItemClick(id = R.id.vp_banner)
+    OnItemClickListener<TopArticle> mOnTopArticleClicked = new OnItemClickListener<TopArticle>() {
+        @Override
+        public void onItemClick(View itemView, TopArticle data, int position) {
+            Toast.makeText(MainActivity.this, "click TopArticle" + position, Toast.LENGTH_SHORT).show();
+        }
+    };
 
-    @BindItemClick(id = R.id.rv)
-    OnItemClickListener mRvOnItemClick = new OnItemClickListener<ArticlePreview>() {
+    @BindItemClick(id = R.id.rv_article_list)
+    OnItemClickListener<ArticlePreview> mOnArticlePreviewClicked = new OnItemClickListener<ArticlePreview>() {
         @Override
         public void onItemClick(View itemView, ArticlePreview data, int position) {
-            Toast.makeText(MainActivity.this, "pos="+position + ", data="+data.getTitle(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "click ArticlePreview: " + data, Toast.LENGTH_SHORT).show();
         }
     };
 }

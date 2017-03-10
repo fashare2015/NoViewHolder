@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fashare.no_view_holder.annotation.BindImageView;
+import com.fashare.no_view_holder.annotation.BindImageViews;
 import com.fashare.no_view_holder.annotation.BindListView;
 import com.fashare.no_view_holder.annotation.BindRecyclerView;
 import com.fashare.no_view_holder.annotation.BindTextView;
@@ -27,9 +28,12 @@ public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
     private static final List<? extends IBehavior<? extends Annotation>> sDataBehaviors = Arrays.asList(
             new BindTextView.Behavior(),
             new BindImageView.Behavior(),
+
             new BindRecyclerView.Behavior(),
             new BindViewPager.Behavior(),
-            new BindListView.Behavior()
+            new BindListView.Behavior(),
+
+            new BindImageViews.Behavior()
     );
 
     private static final List<? extends IBehavior<? extends Annotation>> sClickBehaviors = Arrays.asList(
