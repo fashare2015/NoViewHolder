@@ -75,7 +75,7 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
 
         T data = getItem(position);
         if(data != null) {
-            holder.bind(data, position);
+            holder.notifyDataSetChanged(data, position);
         }else{
             Log.e(TAG, String.format("mDataList.get(%d) is null", position));
         }

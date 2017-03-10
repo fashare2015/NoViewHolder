@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NoViewHolder.Factory.create(this).bind(this);
+        NoViewHolder.Factory.create(this).notifyDataSetChanged(this);
     }
 
     @BindItemClick(id = R.id.vp)

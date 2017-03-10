@@ -40,26 +40,26 @@ public @interface BindItemClick {
         @Override
         public void onBind(ViewGroup itemView, BindItemClick annotation, OnItemClickListener value) {
             final View view = itemView.findViewById(annotation.id());
-                    if(view instanceof ListView){
-                        ListView lv = (ListView) view;
-                        NoListViewAdapter adapter = (NoListViewAdapter) lv.getAdapter();
-                        adapter.setOnItemClickListener(value);
+            if(view instanceof ListView){
+                ListView lv = (ListView) view;
+                NoListViewAdapter adapter = (NoListViewAdapter) lv.getAdapter();
+                adapter.setOnItemClickListener(value);
 
-                    }else if(view instanceof RecyclerView){
-                        RecyclerView rv = (RecyclerView) view;
-                        NoRecyclerViewAdapter adapter = (NoRecyclerViewAdapter) rv.getAdapter();
-                        adapter.setOnItemClickListener(value);
+            }else if(view instanceof RecyclerView){
+                RecyclerView rv = (RecyclerView) view;
+                NoRecyclerViewAdapter adapter = (NoRecyclerViewAdapter) rv.getAdapter();
+                adapter.setOnItemClickListener(value);
 
-                    }else if(view instanceof ViewPager){
-                        ViewPager vp = (ViewPager) view;
-                        NoViewPagerAdapter adapter = (NoViewPagerAdapter) vp.getAdapter();
-                        adapter.setOnItemClickListener(value);
+            }else if(view instanceof ViewPager){
+                ViewPager vp = (ViewPager) view;
+                NoViewPagerAdapter adapter = (NoViewPagerAdapter) vp.getAdapter();
+                adapter.setOnItemClickListener(value);
 
-                    }else{
-                        throw new UnsupportedOperationException(String.format("Field[%s] which annotated by %s must instance of %s、%s or %s!!!",
-                                itemView, annotation.getClass().getSimpleName(), "ListView", "RecyclerView", "ViewPager")
-                        );
-                    }
+            }else{
+                throw new UnsupportedOperationException(String.format("Field[%s] which annotated by %s must instance of %s、%s or %s!!!",
+                        itemView, annotation.getClass().getSimpleName(), "ListView", "RecyclerView", "ViewPager")
+                );
+            }
         }
     }
 }

@@ -35,11 +35,11 @@ public interface IBehavior<A extends Annotation> {
         }
 
         @Override
-        public final void onBind(View itemView, Field field, Object data) {
+        public final void onBind(View itemView, Field field, Object dataHolder) {
             A annotation = getAnnotation(field);
             try {
                 field.setAccessible(true);
-                Object value = field.get(data);
+                Object value = field.get(dataHolder);
 
                 if(mValueClazz.isAssignableFrom(value.getClass())) {
                     Log.d(this.getClass().getSimpleName(), value.toString());
@@ -48,7 +48,7 @@ public interface IBehavior<A extends Annotation> {
                     bindIfNotNull((V) itemView.findViewById(getId(annotation)), annotation, (DATA)value);
                 }else
                     throw new IllegalStateException(String.format("%s.%s which annotated by %s must be %s!!!",
-                            data.getClass().getSimpleName(), field.getName(), mAnnotationClazz.getSimpleName(), mValueClazz.getSimpleName()));
+                            dataHolder.getClass().getSimpleName(), field.getName(), mAnnotationClazz.getSimpleName(), mValueClazz.getSimpleName()));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

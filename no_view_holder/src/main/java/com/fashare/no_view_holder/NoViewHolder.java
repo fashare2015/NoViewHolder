@@ -47,15 +47,15 @@ public abstract class NoViewHolder<T> extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bind(T data){
-        bind(data, 0);
+    public void notifyDataSetChanged(T dataHolder){
+        notifyDataSetChanged(dataHolder, 0);
     }
 
-    public void bind(T data, int pos){
-        onBind(data, pos);
+    public void notifyDataSetChanged(T dataHolder, int pos){
+        onBind(dataHolder, pos);
     }
 
-    protected abstract void onBind(T data, int pos);
+    protected abstract void onBind(T dataHolder, int pos);
 
     public static class Factory{
         public static <T> NoViewHolder<T> create(Activity activity){
@@ -69,18 +69,18 @@ public abstract class NoViewHolder<T> extends RecyclerView.ViewHolder {
         public static <T> NoViewHolder<T> create(View itemView){
             return new NoViewHolder<T>(itemView) {
                 @Override
-                protected void onBind(T data, int pos) {
-                    for (Field field : data.getClass().getDeclaredFields()) {
+                protected void onBind(T dataHolder, int pos) {
+                    for (Field field : dataHolder.getClass().getDeclaredFields()) {
                         for (IBehavior<? extends Annotation> behavior : NoViewHolder.sDataBehaviors) {
                             if(behavior.isApplyedOn(field))
-                                behavior.onBind(itemView, field, data);
+                                behavior.onBind(itemView, field, dataHolder);
                         }
                     }
 
-                    for (Field field : data.getClass().getDeclaredFields()) {
+                    for (Field field : dataHolder.getClass().getDeclaredFields()) {
                         for (IBehavior<? extends Annotation> behavior : NoViewHolder.sClickBehaviors) {
                             if(behavior.isApplyedOn(field))
-                                behavior.onBind(itemView, field, data);
+                                behavior.onBind(itemView, field, dataHolder);
                         }
                     }
                 }

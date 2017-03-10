@@ -64,7 +64,7 @@ public class NoRecyclerViewAdapter<T> extends RecyclerView.Adapter<NoViewHolder<
 
         T data = getDataList().get(position);
         if(data != null) {
-            holder.bind(data, position);
+            holder.notifyDataSetChanged(data, position);
         }else{
             Log.e(TAG, String.format("mDataList.get(%d) is null", position));
         }
