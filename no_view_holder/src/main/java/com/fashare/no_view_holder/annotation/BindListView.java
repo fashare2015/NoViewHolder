@@ -2,7 +2,7 @@ package com.fashare.no_view_holder.annotation;
 
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
-import android.view.View;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.fashare.no_view_holder.IBehavior;
@@ -25,20 +25,23 @@ public @interface BindListView {
 
     @LayoutRes int layout();
 
-    class Behavior extends IBehavior.Simple<BindListView, List>{
+    class Behavior extends IBehavior.Simple<BindListView, ListView, List>{
         public Behavior() {
             super(BindListView.class, List.class);
         }
 
         @Override
-        public void onBind(View itemView, final BindListView annotation, final List value) {
-            final ListView lv = (ListView) itemView.findViewById(annotation.id());
-            bindIfNotNull(lv, annotation.id(), new Runnable() {
-                @Override
-                public void run() {
-                    lv.setAdapter(new NoListViewAdapter<>(lv.getContext(), annotation.layout(), value));
-                }
-            });
+        protected int getId(BindListView annotation) {
+            return annotation.id();
+        }
+
+        @Override
+        public void onBind(ListView targetView, BindListView annotation, List value) {
+            ListAdapter adapter = targetView.getAdapter();
+            if(adapter == null)
+                targetView.setAdapter(new NoListViewAdapter<>(targetView.getContext(), annotation.layout(), value));
+            else if(adapter instanceof NoListViewAdapter)
+                ((NoListViewAdapter) targetView.getAdapter()).setDataList(value);
         }
     }
 }

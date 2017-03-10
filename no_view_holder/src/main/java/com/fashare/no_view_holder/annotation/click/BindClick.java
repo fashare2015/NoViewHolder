@@ -19,20 +19,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface BindClick {
     @IdRes int id();
 
-    class Behavior extends IBehavior.Simple<BindClick, View.OnClickListener>{
+    class Behavior extends IBehavior.Simple<BindClick, View, View.OnClickListener>{
         public Behavior() {
             super(BindClick.class, View.OnClickListener.class);
         }
 
         @Override
+        protected int getId(BindClick annotation) {
+            return annotation.id();
+        }
+
+        @Override
         public void onBind(View itemView, BindClick annotation, final View.OnClickListener value) {
-            final View view = itemView.findViewById(annotation.id());
-            bindIfNotNull(view, annotation.id(), new Runnable() {
-                @Override
-                public void run() {
-                    view.setOnClickListener(value);
-                }
-            });
+            itemView.setOnClickListener(value);
         }
     }
 }

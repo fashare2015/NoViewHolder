@@ -20,11 +20,11 @@ public interface IBehavior<A extends Annotation> {
 
     A getAnnotation(Field field);
 
-    abstract class Simple<A extends Annotation, T> implements IBehavior<A> {
+    abstract class Simple<A extends Annotation, V extends View, DATA> implements IBehavior<A> {
         Class<A> mAnnotationClazz;
-        Class<T> mValueClazz;
+        Class<DATA> mValueClazz;
 
-        public Simple(Class<A> annotationClazz, Class<T> valueClazz) {
+        public Simple(Class<A> annotationClazz, Class<DATA> valueClazz) {
             mAnnotationClazz = annotationClazz;
             mValueClazz = valueClazz;
         }
@@ -43,7 +43,9 @@ public interface IBehavior<A extends Annotation> {
 
                 if(mValueClazz.isAssignableFrom(value.getClass())) {
                     Log.d(this.getClass().getSimpleName(), value.toString());
-                    onBind(itemView, annotation, mValueClazz.cast(value));
+//                    onBind(itemView, annotation, mValueClazz.cast(value));
+
+                    bindIfNotNull((V) itemView.findViewById(getId(annotation)), annotation, (DATA)value);
                 }else
                     throw new IllegalStateException(String.format("%s.%s which annotated by %s must be %s!!!",
                             data.getClass().getSimpleName(), field.getName(), mAnnotationClazz.getSimpleName(), mValueClazz.getSimpleName()));
@@ -52,13 +54,15 @@ public interface IBehavior<A extends Annotation> {
             }
         }
 
-        public abstract void onBind(View itemView, A annotation, T value);
+        protected abstract @IdRes int getId(A annotation);
 
-        protected void bindIfNotNull(View targetView, @IdRes int id, Runnable callback) {
+        public abstract void onBind(V targetView, A annotation, DATA value);
+
+        protected void bindIfNotNull(V targetView, A annotation, DATA value) {
             if(targetView != null){
-                callback.run();
+                onBind(targetView, annotation, value);
             }else{
-                throw new IllegalStateException(String.format("%s with id(%d) is not found!!!", targetView.getClass().getSimpleName(), id));
+                throw new IllegalStateException(String.format("%s with id(%d) is not found!!!", targetView.getClass().getSimpleName(), getId(annotation)));
             }
         }
 

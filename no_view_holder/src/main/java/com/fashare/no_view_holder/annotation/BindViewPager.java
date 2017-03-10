@@ -2,8 +2,8 @@ package com.fashare.no_view_holder.annotation;
 
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 
 import com.fashare.no_view_holder.IBehavior;
 import com.fashare.no_view_holder.widget.NoViewPagerAdapter;
@@ -25,20 +25,23 @@ public @interface BindViewPager {
 
     @LayoutRes int layout();
 
-    class Behavior extends IBehavior.Simple<BindViewPager, List>{
+    class Behavior extends IBehavior.Simple<BindViewPager, ViewPager, List>{
         public Behavior() {
             super(BindViewPager.class, List.class);
         }
 
         @Override
-        public void onBind(View itemView, final BindViewPager annotation, final List value) {
-            final ViewPager vp = (ViewPager) itemView.findViewById(annotation.id());
-            bindIfNotNull(vp, annotation.id(), new Runnable() {
-                @Override
-                public void run() {
-                    vp.setAdapter(new NoViewPagerAdapter<>(vp.getContext(), annotation.layout(), value));
-                }
-            });
+        protected int getId(BindViewPager annotation) {
+            return annotation.id();
+        }
+
+        @Override
+        public void onBind(ViewPager targetView, BindViewPager annotation, List value) {
+            PagerAdapter adapter = targetView.getAdapter();
+            if(adapter == null)
+                targetView.setAdapter(new NoViewPagerAdapter<>(targetView.getContext(), annotation.layout(), value));
+            else if(adapter instanceof NoViewPagerAdapter)
+                ((NoViewPagerAdapter) targetView.getAdapter()).setDataList(value);
         }
     }
 }

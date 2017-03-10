@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 
 import com.fashare.no_view_holder.NoViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,10 +21,16 @@ import java.util.List;
 public class NoListViewAdapter<T> extends ArrayAdapter<T> {
     protected final String TAG = this.getClass().getSimpleName();
     @LayoutRes int mLayoutRes;
+    private List<T> mDataList;
     private OnItemClickListener<T> mOnItemClickListener;
 
-    public OnItemClickListener<T> getOnItemClickListener() {
-        return mOnItemClickListener;
+    public List<T> getDataList() {
+        return mDataList;
+    }
+
+    public void setDataList(List<T> dataList) {
+        mDataList = dataList;
+        this.notifyDataSetChanged();
     }
 
     public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
@@ -33,11 +40,13 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
     public NoListViewAdapter(Context context, int resource) {
         super(context, resource);
         mLayoutRes = resource;
+        mDataList = new ArrayList<>();
     }
 
-    public NoListViewAdapter(Context context, int resource, List objects) {
+    public NoListViewAdapter(Context context, int resource, List<T> objects) {
         super(context, resource, objects);
         mLayoutRes = resource;
+        mDataList = objects;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.fashare.no_view_holder.annotation;
 
 import android.support.annotation.IdRes;
-import android.view.View;
 import android.widget.TextView;
 
 import com.fashare.no_view_holder.IBehavior;
@@ -20,20 +19,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface BindTextView {
     @IdRes int id();
 
-    class Behavior extends IBehavior.Simple<BindTextView, String>{
+    class Behavior extends IBehavior.Simple<BindTextView, TextView, String>{
         public Behavior() {
             super(BindTextView.class, String.class);
         }
 
         @Override
-        public void onBind(View itemView, BindTextView annotation, final String value) {
-            final TextView tv = (TextView) itemView.findViewById(annotation.id());
-            bindIfNotNull(tv, annotation.id(), new Runnable() {
-                @Override
-                public void run() {
-                    tv.setText(value);
-                }
-            });
+        protected int getId(BindTextView annotation) {
+            return annotation.id();
+        }
+
+        @Override
+        public void onBind(TextView targetView, BindTextView annotation, String value) {
+            targetView.setText(value);
         }
     }
 }
