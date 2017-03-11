@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fashare.no_view_holder.NoViewHolder;
+import com.fashare.no_view_holder.annotation.BindTextView;
 import com.fashare.no_view_holder.annotation.click.BindItemClick;
 import com.fashare.no_view_holder.widget.OnItemClickListener;
 import com.fashare.noviewholder.model.ArticlePreview;
@@ -23,6 +25,14 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+    NoViewHolder.Options mDataOptions = new NoViewHolder.DataOptions()
+            .setBehaviors(new BindTextView.Behavior(){
+                @Override
+                public void onBind(TextView targetView, BindTextView annotation, String value) {
+                    targetView.setText("hahaha" + value);
+                }
+            });
+
     NoViewHolder mNoViewHolder;
 
     @Override
@@ -31,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mNoViewHolder = NoViewHolder.Factory.create(this);
+        mNoViewHolder = NoViewHolder.Factory.create(this)
+                .setDataOptions(mDataOptions);
+
         mSrlRefresh.setOnRefreshListener(reload);
         loadData();
     }

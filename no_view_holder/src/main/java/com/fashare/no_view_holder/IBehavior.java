@@ -20,6 +20,8 @@ public interface IBehavior<A extends Annotation> {
 
     A getAnnotation(Field field);
 
+    Class<A> belongsTo();
+
     abstract class Simple<A extends Annotation, V extends View, DATA> implements IBehavior<A> {
         Class<A> mAnnotationClazz;
         Class<DATA> mValueClazz;
@@ -70,6 +72,22 @@ public interface IBehavior<A extends Annotation> {
         public A getAnnotation(Field field) {
             return field.getAnnotation(mAnnotationClazz);
         }
+
+        @Override
+        public Class<A> belongsTo() {
+            return mAnnotationClazz;
+        }
+
+        // should override equals() and hashcode(), while using HashSet() on NoViewHolder.Options
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof IBehavior && this.belongsTo() == ((IBehavior) obj).belongsTo();
+        }
+
+        @Override
+        public int hashCode() {
+            return this.belongsTo().hashCode();
+        }
     }
 
     abstract class Group<A extends Annotation, DATA> implements IBehavior<A>{
@@ -111,6 +129,22 @@ public interface IBehavior<A extends Annotation> {
         @Override
         public A getAnnotation(Field field) {
             return field.getAnnotation(mAnnotationClazz);
+        }
+
+        @Override
+        public Class<A> belongsTo() {
+            return mAnnotationClazz;
+        }
+
+        // should override equals() and hashcode(), while using HashSet() on NoViewHolder.Options
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof IBehavior && this.belongsTo() == ((IBehavior) obj).belongsTo();
+        }
+
+        @Override
+        public int hashCode() {
+            return this.belongsTo().hashCode();
         }
     }
 }
