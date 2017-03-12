@@ -5,7 +5,8 @@ import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 
 import com.fashare.no_view_holder.IBehavior;
-import com.fashare.no_view_holder.widget.NoRecyclerViewAdapter;
+import com.fashare.no_view_holder.widget.rv.ItemTypeDelegate;
+import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -23,6 +24,8 @@ public @interface BindRecyclerView {
     @IdRes int id();
 
     @LayoutRes int layout();
+
+    int itemType() default Integer.MAX_VALUE;
 
     LayoutManager layoutManager() default @LayoutManager;
 
@@ -42,9 +45,20 @@ public @interface BindRecyclerView {
             if(adapter == null) {
                 LayoutManager lm = annotation.layoutManager();
                 targetView.setLayoutManager(lm.style().get(targetView.getContext(), lm.spanCount()));
-                targetView.setAdapter(new NoRecyclerViewAdapter(targetView.getContext(), annotation.layout(), value));
-            }else if(adapter instanceof NoRecyclerViewAdapter)
-                ((NoRecyclerViewAdapter) targetView.getAdapter()).setDataList(value);
+                NoRvAdapter noRvAdapter = new NoRvAdapter(targetView.getContext(), annotation.layout(), value);
+                noRvAdapter.addItemViewDelegate(new ItemTypeDelegate(annotation.layout(), annotation.itemType(), noRvAdapter));
+                for (Object data : value) {
+                    noRvAdapter.putType(data, annotation.itemType());
+                }
+                targetView.setAdapter(noRvAdapter);
+
+            }else if(adapter instanceof NoRvAdapter) {
+                NoRvAdapter noRvAdapter = (NoRvAdapter) targetView.getAdapter();
+                for (Object data : value) {
+                    noRvAdapter.putType(data, annotation.itemType());
+                }
+                noRvAdapter.setDataList(value);
+            }
         }
     }
 }

@@ -30,6 +30,10 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.0'
     testCompile 'junit:junit:4.12'
 
+    // hongyangAndroid: base-adapter
+    compile 'com.zhy:base-rvadapter:3.0.3'
+    compile 'com.zhy:base-adapter:3.0.3'
+
     // glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'

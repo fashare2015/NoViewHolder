@@ -3,6 +3,7 @@ package com.fashare.noviewholder;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     NoViewHolder.Options mDataOptions = new NoViewHolder.DataOptions()
-            .setBehaviors(new BindTextView.Behavior(){
+            .setBehaviors(new BindTextView.Behavior() {
                 @Override
                 public void onBind(TextView targetView, BindTextView annotation, String value) {
                     targetView.setText("hahaha" + value);
@@ -46,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
 
         mSrlRefresh.setOnRefreshListener(reload);
         loadData();
+//        LoadMoreWrapper loadMoreWrapper = new LoadMoreWrapper(mRvArticleList.getAdapter());
+//        loadMoreWrapper.setLoadMoreView(R.layout.layout_load_more)
+//                .setOnLoadMoreListener(new LoadMoreWrapper.OnLoadMoreListener() {
+//                    @Override
+//                    public void onLoadMoreRequested() {
+//
+//                    }
+//                });
+//        mRvArticleList.setAdapter(loadMoreWrapper);
     }
 
     private void loadData() {
@@ -67,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @BindView(R.id.rv_article_list)
+    RecyclerView mRvArticleList;
 
     @BindView(R.id.srl_refresh)
     SwipeRefreshLayout mSrlRefresh;

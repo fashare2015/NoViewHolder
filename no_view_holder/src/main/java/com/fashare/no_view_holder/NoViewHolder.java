@@ -2,7 +2,6 @@ package com.fashare.no_view_holder;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,6 +9,7 @@ import com.fashare.no_view_holder.annotation.BindImageView;
 import com.fashare.no_view_holder.annotation.BindImageViews;
 import com.fashare.no_view_holder.annotation.BindListView;
 import com.fashare.no_view_holder.annotation.BindRecyclerView;
+import com.fashare.no_view_holder.annotation.BindRvHeader;
 import com.fashare.no_view_holder.annotation.BindTextView;
 import com.fashare.no_view_holder.annotation.BindViewPager;
 import com.fashare.no_view_holder.annotation.click.BindClick;
@@ -95,7 +95,7 @@ public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
             final public Set<? extends IBehavior<? extends Annotation>> getMergedBehaviors() {
                 Set<IBehavior<? extends Annotation>> behaviors = new HashSet<>();
 
-                Log.d("Default", "mCustomizedDataBehaviors:" + mCustomizedDataBehaviors);
+//                Log.d("Default", "mCustomizedDataBehaviors:" + mCustomizedDataBehaviors);
                 behaviors.addAll(mCustomizedDataBehaviors); // 先加载 用户自定义的 Behaviors
                 behaviors.addAll(getDefaultBehaviors());    // 再加载 默认的, 有重复的不会加进去
                 return behaviors;
@@ -129,6 +129,7 @@ public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
                 new BindImageView.Behavior(),
 
                 new BindRecyclerView.Behavior(),
+                new BindRvHeader.Behavior(),
                 new BindViewPager.Behavior(),
                 new BindListView.Behavior(),
 

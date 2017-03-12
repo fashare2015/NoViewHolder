@@ -29,7 +29,7 @@ public @interface BindImageViews {
             IBehavior.Simple behavior = new BindImageView.Behavior();
             for (int i=0; i<annotation.value().length && i<value.size(); i++) {
                 BindImageView innerAnnotation = annotation.value()[i];
-                behavior.bindIfNotNull(itemView.findViewById(innerAnnotation.id()), innerAnnotation, value.get(i));
+                behavior.bindIfNotNull(itemView.findViewById(innerAnnotation.id()), innerAnnotation, value.get(i), null);
             }
         }
     }

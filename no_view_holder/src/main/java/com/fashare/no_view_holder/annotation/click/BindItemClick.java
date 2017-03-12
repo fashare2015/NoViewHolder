@@ -9,9 +9,9 @@ import android.widget.ListView;
 
 import com.fashare.no_view_holder.IBehavior;
 import com.fashare.no_view_holder.widget.NoListViewAdapter;
-import com.fashare.no_view_holder.widget.NoRecyclerViewAdapter;
 import com.fashare.no_view_holder.widget.NoViewPagerAdapter;
 import com.fashare.no_view_holder.widget.OnItemClickListener;
+import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -48,7 +48,7 @@ public @interface BindItemClick {
 
             }else if(view instanceof RecyclerView){
                 RecyclerView rv = (RecyclerView) view;
-                NoRecyclerViewAdapter adapter = (NoRecyclerViewAdapter) rv.getAdapter();
+                NoRvAdapter adapter = (NoRvAdapter) rv.getAdapter();
                 if(adapter != null)
                     adapter.setOnItemClickListener(value);
 

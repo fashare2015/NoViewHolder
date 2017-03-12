@@ -23,6 +23,7 @@ public interface IBehavior<A extends Annotation> {
     Class<A> belongsTo();
 
     abstract class Simple<A extends Annotation, V extends View, DATA> implements IBehavior<A> {
+        protected final String TAG = this.getClass().getCanonicalName();
         Class<A> mAnnotationClazz;
         Class<DATA> mValueClazz;
 
@@ -44,10 +45,10 @@ public interface IBehavior<A extends Annotation> {
                 Object value = field.get(dataHolder);
 
                 if(mValueClazz.isAssignableFrom(value.getClass())) {
-                    Log.d(this.getClass().getSimpleName(), value.toString());
+                    Log.d(TAG, value.toString());
 //                    onBind(itemView, annotation, mValueClazz.cast(value));
 
-                    bindIfNotNull((V) itemView.findViewById(getId(annotation)), annotation, (DATA)value);
+                    bindIfNotNull((V) itemView.findViewById(getId(annotation)), annotation, (DATA)value, dataHolder);
                 }else
                     throw new IllegalStateException(String.format("%s.%s which annotated by %s must be %s!!!",
                             dataHolder.getClass().getSimpleName(), field.getName(), mAnnotationClazz.getSimpleName(), mValueClazz.getSimpleName()));
@@ -60,11 +61,14 @@ public interface IBehavior<A extends Annotation> {
 
         public abstract void onBind(V targetView, A annotation, DATA value);
 
-        public void bindIfNotNull(V targetView, A annotation, DATA value) {
+        protected void onBind(V targetView, A annotation, DATA value, Object dataHolder){}
+
+        public void bindIfNotNull(V targetView, A annotation, DATA value, Object dataHolder) {
             if(targetView != null){
                 onBind(targetView, annotation, value);
+                onBind(targetView, annotation, value, dataHolder);
             }else{
-                throw new IllegalStateException(String.format("%s with id(%d) is not found!!!", targetView.getClass().getSimpleName(), getId(annotation)));
+                Log.e(TAG, String.format("%s with id(%d) is not found!!!", annotation.getClass().getSimpleName(), getId(annotation)));
             }
         }
 
