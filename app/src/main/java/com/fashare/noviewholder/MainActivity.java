@@ -16,6 +16,8 @@ import com.fashare.noviewholder.model.ArticlePreview;
 import com.fashare.noviewholder.model.LatestNews;
 import com.fashare.noviewholder.model.TopArticle;
 
+import java.util.Arrays;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Retrofit;
@@ -26,7 +28,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
-    NoViewHolder.Options mDataOptions = new NoViewHolder.DataOptions()
+    static NoViewHolder.Options mDataOptions = new NoViewHolder.DataOptions()
             .setBehaviors(new BindTextView.Behavior() {
                 @Override
                 public void onBind(TextView targetView, BindTextView annotation, String value) {
@@ -34,7 +36,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    static {
+        NoViewHolder.setDataOptions(mDataOptions);
+    }
+
     NoViewHolder mNoViewHolder;
+
+    private LatestNews mLatestNews = new LatestNews();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mNoViewHolder = NoViewHolder.Factory.create(this)
-                .setDataOptions(mDataOptions);
+        mNoViewHolder = new NoViewHolder.Factory(this)
+                .initView(mLatestNews)
+                .build();
+
 
         mSrlRefresh.setOnRefreshListener(reload);
         loadData();
@@ -52,7 +62,13 @@ public class MainActivity extends AppCompatActivity {
 //                .setOnLoadMoreListener(new LoadMoreWrapper.OnLoadMoreListener() {
 //                    @Override
 //                    public void onLoadMoreRequested() {
-//
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mLatestNews.getStories().add(new ArticlePreview());
+//                                mNoViewHolder.notifyDataSetChanged(mLatestNews);
+//                            }
+//                        }, 2000);
 //                    }
 //                });
 //        mRvArticleList.setAdapter(loadMoreWrapper);
@@ -72,8 +88,13 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Action1<LatestNews>() {
                     @Override
                     public void call(LatestNews latestNews) {
+                        latestNews.setStrings(Arrays.asList(
+                                new ArticlePreview(),
+                                new ArticlePreview(),
+                                new ArticlePreview()
+                        ));
                         mSrlRefresh.setRefreshing(false);
-                        mNoViewHolder.notifyDataSetChanged(latestNews);
+                        mNoViewHolder.notifyDataSetChanged(mLatestNews = latestNews);
                     }
                 });
     }

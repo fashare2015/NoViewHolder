@@ -31,7 +31,7 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
         return mTypeRecorder;
     }
 
-    private Object clickHolder;
+    private Object clickHolder = this;
 
     public void putType(Object obj, int itemType){
         mTypeRecorder.put(obj, itemType);
@@ -54,13 +54,13 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
         this.clickHolder = clickHolder;
     }
 
-    public void setDataList(List<T> dataList) {
-        mDatas = dataList;
-        this.notifyDataSetChanged();
-    }
-
     public void setOnItemClickListener(com.fashare.no_view_holder.widget.OnItemClickListener<T> onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
+    }
+
+    public void setDataList(List<T> dataList) {
+        mDatas = dataList;
+        notifyDataSetChanged();
     }
 
     public NoRvAdapter(Context context, @LayoutRes int layoutRes) {
@@ -73,15 +73,16 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
     }
 
     @Override
-    public void onViewHolderCreated(ViewHolder holder, View itemView) {
-//        Log.d(TAG, "onViewHolderCreated: ");
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        ViewHolder holder = super.onCreateViewHolder(parent, viewType);
 
-        NoViewHolder noViewHolder = null;
-        if(clickHolder == null) // 不带 header 的普通布局
-            noViewHolder = NoViewHolder.Factory.create(holder.itemView);
-        else    // 加 header 嵌套布局时, 要传入 clickHolder, 以便把点击事件串起来(传给header)。
-            noViewHolder = NoViewHolder.Factory.create(holder.itemView, clickHolder);
+        // 加 header 嵌套布局时, 要传入 clickHolder, 以便把点击事件串起来(传给header)。
+        int pos = holder.getAdapterPosition();
+        NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.itemView, clickHolder)
+//                .initView(getDatas().get(0))    // TODO: pos ???
+                .build();
         mViewHolderConvertor.put(holder, noViewHolder);
+        return holder;
     }
 
     @Override

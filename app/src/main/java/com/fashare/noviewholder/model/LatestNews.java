@@ -1,9 +1,10 @@
 package com.fashare.noviewholder.model;
 
+import com.fashare.no_view_holder.annotation.BindImageView;
 import com.fashare.no_view_holder.annotation.BindRecyclerView;
 import com.fashare.no_view_holder.annotation.BindRvHeader;
 import com.fashare.no_view_holder.annotation.BindTextView;
-import com.fashare.no_view_holder.annotation.BindViewPager;
+import com.fashare.no_view_holder.annotation.LayoutManager;
 import com.fashare.noviewholder.R;
 
 import java.util.List;
@@ -19,13 +20,28 @@ public class LatestNews{
      * top_stories : [{"title":"商场和很多人家里，竹制家具越来越多（多图）","image":"http://p2.zhimg.com/9a/15/9a1570bb9e5fa53ae9fb9269a56ee019.jpg","ga_prefix":"052315","type":0,"id":3930883}]
      */
 
-    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_banner, itemType = 0)
-    @BindViewPager(id = R.id.vp_banner, layout = R.layout.item_banner)
+    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_classify, itemType = 0)
+//    @BindViewPager(id = R.id.vp_banner, layout = R.layout.item_banner)
+    @BindRecyclerView(id = R.id.rv_in_header, layout = R.layout.item_banner,
+            layoutManager = @LayoutManager(style = LayoutManager.Style.GRID, spanCount = 3)
+    )
     private List<TopArticle> top_stories;
 
-    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_text, itemType = 0)
+//    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_classify, itemType = 0)
+//    @BindRecyclerView(id = R.id.rv_in_header, layout = R.layout.item_article)
+    private List<ArticlePreview> mStrings;
+
+    public void setStrings(List<ArticlePreview> strings) {
+        mStrings = strings;
+    }
+
+    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_text, itemType = 1)
     @BindTextView(id = R.id.tv)
     private String date = "";
+
+    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_img, itemType = 2)
+    @BindImageView(id = R.id.iv, placeHolder = R.mipmap.ic_launcher)
+    private String img = "";
 
     @BindRecyclerView(id = R.id.rv_article_list, layout = R.layout.item_article)
     private List<ArticlePreview> stories;

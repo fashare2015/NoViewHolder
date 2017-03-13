@@ -25,6 +25,8 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
     private List<T> mDataList;
     private OnItemClickListener<T> mOnItemClickListener;
 
+    private Object clickHolder = this;
+
     /**
      * reutrn POSITION_NONE 使得 notifyDataSetChanged() 会触发 instantiateItem() -> onBindViewHolder()
      * @param object
@@ -41,11 +43,15 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
 
     public void setDataList(List<T> dataList) {
         mDataList = dataList;
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
+    }
+
+    public void setClickHolder(Object clickHolder) {
+        this.clickHolder = clickHolder;
     }
 
     public NoViewPagerAdapter(Context context, @LayoutRes int layoutRes) {
@@ -72,14 +78,17 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        NoViewHolder viewHolder = createViewHolder(container);
+        NoViewHolder viewHolder = createViewHolder(container, position);
         onBindViewHolder(viewHolder, position);
         return viewHolder.itemView;
     }
 
-    protected final NoViewHolder createViewHolder(ViewGroup container) {
+    protected final NoViewHolder createViewHolder(ViewGroup container, int position) {
         NoViewHolder viewHolder;
-        viewHolder = NoViewHolder.Factory.create(LayoutInflater.from(mContext).inflate(mLayoutRes, container, false));
+        View itemView = LayoutInflater.from(mContext).inflate(mLayoutRes, container, false);
+        viewHolder = new NoViewHolder.Factory(itemView, clickHolder)
+                .initView(getDataList().get(position))
+                .build();
 
         if(viewHolder != null) {
             container.addView(viewHolder.itemView);

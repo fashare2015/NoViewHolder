@@ -11,7 +11,7 @@ import com.zhy.adapter.recyclerview.base.ViewHolder;
  * Time: 20:05
  * <br/><br/>
  */
-public class ItemTypeDelegate implements ItemViewDelegate<Object> {
+public abstract class ItemTypeDelegate implements ItemViewDelegate<Object> {
     @LayoutRes int mLayoutRes;
     int mTargetType;
 
@@ -34,7 +34,5 @@ public class ItemTypeDelegate implements ItemViewDelegate<Object> {
     }
 
     @Override
-    public void convert(ViewHolder holder, Object data, int position) {
-        mAdapter.getNoViewHolder(holder).notifyDataSetChanged(data, position);
-    }
+    public abstract void convert(ViewHolder holder, Object data, int position);
 }

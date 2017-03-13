@@ -25,17 +25,23 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
     private List<T> mDataList;
     private OnItemClickListener<T> mOnItemClickListener;
 
+    private Object clickHolder = this;
+
     public List<T> getDataList() {
         return mDataList;
     }
 
     public void setDataList(List<T> dataList) {
         mDataList = dataList;
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
+    }
+
+    public void setClickHolder(Object clickHolder) {
+        this.clickHolder = clickHolder;
     }
 
     public NoListViewAdapter(Context context, int resource) {
@@ -55,7 +61,9 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
         NoViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(mLayoutRes, parent, false);
-            viewHolder = NoViewHolder.Factory.create(convertView);
+            viewHolder = new NoViewHolder.Factory(convertView, clickHolder)
+                    .initView(getItem(position))
+                    .build();
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (NoViewHolder) convertView.getTag();

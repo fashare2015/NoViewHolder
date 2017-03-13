@@ -31,6 +31,8 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
     protected final String TAG = this.getClass().getSimpleName();
 
     private final Object mClickHolder;
+    private final List<?> mDataHolderList;
+    private final Set<Class<?>> mDataHolderClassSet;
 
     public Object getClickHolder() {
         return mClickHolder;
@@ -38,22 +40,53 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
 
     // TODO: static
     private static Options mClickOptions = new ClickOptions(),
-            mDataOptions = new DataOptions();
+            mDataOptions = new DataOptions(),
+            mExtraOptions = new Options.Default(){
+                @Override
+                protected Set<? extends IBehavior<? extends Annotation>> getDefaultBehaviors() {
+                    return new HashSet<>(Arrays.asList(new BindRvHeader.Behavior()));
+                }
+            };
 
-    public NoViewHolder setClickOptions(Options clickOptions) {
+    public static void setClickOptions(Options clickOptions) {
         mClickOptions = clickOptions;
-        return this;
     }
 
-    public NoViewHolder setDataOptions(Options dataOptions) {
+    public static void setDataOptions(Options dataOptions) {
         mDataOptions = dataOptions;
-        return this;
     }
 
-    private NoViewHolder(View itemView, Object clickHolder) {
-        super(itemView);
-        mClickHolder = clickHolder;
-        onBind(clickHolder, 0, mClickOptions);
+    private NoViewHolder(Factory builder) {
+        super(builder.mItemView);
+        mClickHolder = builder.mClickHolder;
+        mDataHolderList = builder.mDataHolderList;
+        mDataHolderClassSet = builder.mDataHolderClassSet;
+
+        // 1. 先初始化 view, 以及相关 adapter
+        for (Object dataHolder: mDataHolderList) {
+            onInitView(dataHolder, mDataOptions);
+        }
+
+        // 2. adapter 准备好以后, 嵌套的 @BindRvHeader 额外处理
+//        for (Object dataHolder: mDataHolderList) {
+//            onInitView(dataHolder, mExtraOptions);
+//        }
+
+        // 3. view 和 adapter 都准备好以后, 绑定 click() 和 itemClick()
+        onInitView(mClickHolder, mClickOptions);
+    }
+
+    private void onInitView(Object holder, Options options) {
+        if(holder == null){
+            Log.e(TAG, "clickHolder or dataHolder is null!!! Nothing happens.");
+            return ;
+        }
+        for (Field field : holder.getClass().getDeclaredFields()) {
+            for (IBehavior<? extends Annotation> behavior : options.getMergedBehaviors()) {
+                if(behavior.isApplyedOn(field))
+                    behavior.onInitView(this, itemView, field, holder);
+            }
+        }
     }
 
     public void notifyDataSetChanged(Object dataHolder){
@@ -61,17 +94,22 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void notifyDataSetChanged(Object dataHolder, int pos){
+        if(!mDataHolderClassSet.contains(dataHolder.getClass())){
+            //TODO:
+//            throw new IllegalStateException(String.format("You must call NoViewHolder.init(dataHolder) before call NoViewHolder.notifyDataSetChanged(dataHolder)!!! [dataHolder: %s]", dataHolder));
+        }
         onBind(dataHolder, pos, mDataOptions);
-        onBind(mClickHolder, 0, mClickOptions);
+        onInitView(mClickHolder, mClickOptions);
     }
 
     private void onBind(Object holder, int pos, Options options) {
         if(holder == null){
-            Log.d(TAG, "clickHolder or dataHolder is null!!! Nothing happens.");
+            Log.e(TAG, "clickHolder or dataHolder is null!!! Nothing happens.");
             return ;
         }
-        for (Field field : holder.getClass().getDeclaredFields()) {
-            for (IBehavior<? extends Annotation> behavior : options.getMergedBehaviors()) {
+
+        for (IBehavior<? extends Annotation> behavior : options.getMergedBehaviors()){
+            for (Field field : holder.getClass().getDeclaredFields()) {
                 if(behavior.isApplyedOn(field))
                     behavior.onBind(this, itemView, field, holder);
             }
@@ -79,16 +117,29 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
     }
 
     public static class Factory{
-        public static NoViewHolder create(Activity activity){
-            return create(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0), activity);
+        private View mItemView;
+        private Object mClickHolder;
+        private List<?> mDataHolderList = new ArrayList<>();
+        private Set<Class<?>> mDataHolderClassSet = new HashSet<>();
+
+        public Factory(Activity activity){
+            this(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0), activity);
         }
 
-        public static NoViewHolder create(View itemView){
-            return create(itemView, itemView);
+        public Factory(View itemView, Object clickHolder) {
+            mItemView = itemView;
+            mClickHolder = clickHolder;
         }
 
-        public static NoViewHolder create(View itemView, Object clickHolder){
-            return new NoViewHolder(itemView, clickHolder);
+        public Factory initView(Object... dataHolderList){
+            mDataHolderList = Arrays.asList(dataHolderList);
+            for (Object item : dataHolderList)
+                mDataHolderClassSet.add(item.getClass());
+            return this;
+        }
+
+        public NoViewHolder build(){
+            return new NoViewHolder(this);
         }
     }
 

@@ -40,8 +40,11 @@ public @interface BindRvHeader {
 
         @Override
         protected void onBind(NoViewHolder noViewHolder, RecyclerView targetView, BindRvHeader annotation, Object value, final Object dataHolder) {
+            if(value == null)
+                return ;
+
             RecyclerView.Adapter adapter = targetView.getAdapter();
-            if(adapter != null) {
+//            if(adapter != null) {
                 // TODO: 应该放到 "初始化" 流程, 而不是放在 "onBind()" 下
                 NoRvAdapter headerAdapter = null;
                 if(adapter instanceof NoRvAdapter) {
@@ -55,10 +58,9 @@ public @interface BindRvHeader {
                     });
                     headerAdapter.putType(value, annotation.itemType());
                     headerAdapter.getDatas().add(0, value);
-                    headerAdapter.setClickHolder(noViewHolder.getClickHolder());    // 加 header 嵌套布局时, 要传入 clickHolder, 以便把点击事件串起来。
                     headerAdapter.notifyDataSetChanged();
                 }
-            }
+//            }
         }
     }
 }

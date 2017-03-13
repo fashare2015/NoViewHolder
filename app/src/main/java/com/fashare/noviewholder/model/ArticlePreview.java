@@ -22,7 +22,7 @@ public class ArticlePreview {
      */
 
     @BindTextView(id=R.id.tv_title)
-    private String title;
+    private String title="aaaaa";
 
     @BindImageViews({
             @BindImageView(id=R.id.iv_image, placeHolder=R.mipmap.ic_launcher)

@@ -27,6 +27,8 @@ public @interface BindImageViews {
 
         @Override
         protected void onBind(NoViewHolder noViewHolder, View itemView, BindImageViews annotation, List value) {
+            if(value == null)
+                return ;
             IBehavior.Simple behavior = new BindImageView.Behavior();
             for (int i=0; i<annotation.value().length && i<value.size(); i++) {
                 BindImageView innerAnnotation = annotation.value()[i];
