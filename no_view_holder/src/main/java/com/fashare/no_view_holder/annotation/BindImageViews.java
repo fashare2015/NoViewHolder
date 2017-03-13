@@ -3,6 +3,7 @@ package com.fashare.no_view_holder.annotation;
 import android.view.View;
 
 import com.fashare.no_view_holder.IBehavior;
+import com.fashare.no_view_holder.NoViewHolder;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -25,11 +26,11 @@ public @interface BindImageViews {
         }
 
         @Override
-        protected void onBind(View itemView, BindImageViews annotation, List value) {
+        protected void onBind(NoViewHolder noViewHolder, View itemView, BindImageViews annotation, List value) {
             IBehavior.Simple behavior = new BindImageView.Behavior();
             for (int i=0; i<annotation.value().length && i<value.size(); i++) {
                 BindImageView innerAnnotation = annotation.value()[i];
-                behavior.bindIfNotNull(itemView.findViewById(innerAnnotation.id()), innerAnnotation, value.get(i), null);
+                behavior.bindIfNotNull(noViewHolder, itemView.findViewById(innerAnnotation.id()), innerAnnotation, value.get(i), null);
             }
         }
     }

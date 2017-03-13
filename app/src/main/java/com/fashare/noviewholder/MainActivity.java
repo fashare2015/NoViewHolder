@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     OnItemClickListener<ArticlePreview> mOnArticlePreviewClicked = new OnItemClickListener<ArticlePreview>() {
         @Override
         public void onItemClick(View itemView, ArticlePreview data, int position) {
-            Toast.makeText(MainActivity.this, "click ArticlePreview: " + data, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "click ArticlePreview: " + position + ", "+ data, Toast.LENGTH_SHORT).show();
         }
     };
 }

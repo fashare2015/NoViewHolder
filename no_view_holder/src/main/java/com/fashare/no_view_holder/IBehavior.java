@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 public interface IBehavior<A extends Annotation> {
     boolean isApplyedOn(Field field);
 
-    void onBind(View itemView, Field field, Object data);
+    void onBind(NoViewHolder noViewHolder, View itemView, Field field, Object data);
 
     A getAnnotation(Field field);
 
@@ -38,7 +38,7 @@ public interface IBehavior<A extends Annotation> {
         }
 
         @Override
-        public final void onBind(View itemView, Field field, Object dataHolder) {
+        public final void onBind(NoViewHolder noViewHolder, View itemView, Field field, Object dataHolder) {
             A annotation = getAnnotation(field);
             try {
                 field.setAccessible(true);
@@ -47,7 +47,7 @@ public interface IBehavior<A extends Annotation> {
                 if(mValueClazz.isAssignableFrom(value.getClass())) {
                     Log.d(TAG, value.toString());
 
-                    onBindAbstract(itemView, annotation, (DATA)value, dataHolder);
+                    onBindAbstract(noViewHolder, itemView, annotation, (DATA)value, dataHolder);
                 }else
                     throw new IllegalStateException(String.format("%s.%s which annotated by %s must be %s!!!",
                             dataHolder.getClass().getSimpleName(), field.getName(), mAnnotationClazz.getSimpleName(), mValueClazz.getSimpleName()));
@@ -56,7 +56,7 @@ public interface IBehavior<A extends Annotation> {
             }
         }
 
-        protected abstract void onBindAbstract(View itemView, A annotation, DATA value, Object dataHolder);
+        protected abstract void onBindAbstract(NoViewHolder noViewHolder, View itemView, A annotation, DATA value, Object dataHolder);
 
         @Override
         public A getAnnotation(Field field) {
@@ -86,14 +86,16 @@ public interface IBehavior<A extends Annotation> {
         }
 
         @Override
-        protected void onBindAbstract(View itemView, A annotation, DATA value, Object dataHolder) {
-            bindIfNotNull((V) itemView.findViewById(getId(annotation)), annotation, (DATA)value, dataHolder);
+        protected void onBindAbstract(NoViewHolder noViewHolder, View itemView, A annotation, DATA value, Object dataHolder) {
+            bindIfNotNull(noViewHolder, (V) itemView.findViewById(getId(annotation)), annotation, (DATA)value, dataHolder);
         }
 
-        public void bindIfNotNull(V targetView, A annotation, DATA value, Object dataHolder) {
+        public void bindIfNotNull(NoViewHolder noViewHolder, V targetView, A annotation, DATA value, Object dataHolder) {
             if(targetView != null){
                 onBind(targetView, annotation, value);
                 onBind(targetView, annotation, value, dataHolder);
+                onBind(noViewHolder, targetView, annotation, value);
+                onBind(noViewHolder, targetView, annotation, value, dataHolder);
             }else{
                 Log.e(TAG, String.format("%s with id(%d) is not found!!!", annotation.getClass().getSimpleName(), getId(annotation)));
             }
@@ -101,9 +103,11 @@ public interface IBehavior<A extends Annotation> {
 
         protected abstract @IdRes int getId(A annotation);
 
-        protected abstract void onBind(V targetView, A annotation, DATA value);
-
+        protected void onBind(V targetView, A annotation, DATA value){}
         protected void onBind(V targetView, A annotation, DATA value, Object dataHolder){}
+
+        protected void onBind(NoViewHolder noViewHolder, V targetView, A annotation, DATA value){}
+        protected void onBind(NoViewHolder noViewHolder, V targetView, A annotation, DATA value, Object dataHolder){}
     }
 
     abstract class Group<A extends Annotation, DATA> extends Abstract<A, View, DATA>{
@@ -112,10 +116,10 @@ public interface IBehavior<A extends Annotation> {
         }
 
         @Override
-        protected void onBindAbstract(View itemView, A annotation, DATA value, Object dataHolder) {
-            onBind(itemView, annotation, value);
+        protected void onBindAbstract(NoViewHolder noViewHolder, View itemView, A annotation, DATA value, Object dataHolder) {
+            onBind(noViewHolder, itemView, annotation, value);
         }
 
-        protected abstract void onBind(View targetView, A annotation, DATA value);
+        protected abstract void onBind(NoViewHolder noViewHolder, View targetView, A annotation, DATA value);
     }
 }

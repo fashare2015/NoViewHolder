@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 
 import com.fashare.no_view_holder.IBehavior;
+import com.fashare.no_view_holder.NoViewHolder;
 import com.fashare.no_view_holder.widget.rv.ItemTypeDelegate;
 import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -38,10 +39,7 @@ public @interface BindRvHeader {
         }
 
         @Override
-        protected void onBind(RecyclerView targetView, final BindRvHeader annotation, final Object value) {}
-
-        @Override
-        protected void onBind(RecyclerView targetView, BindRvHeader annotation, Object value, final Object dataHolder) {
+        protected void onBind(NoViewHolder noViewHolder, RecyclerView targetView, BindRvHeader annotation, Object value, final Object dataHolder) {
             RecyclerView.Adapter adapter = targetView.getAdapter();
             if(adapter != null) {
                 // TODO: 应该放到 "初始化" 流程, 而不是放在 "onBind()" 下
@@ -57,6 +55,7 @@ public @interface BindRvHeader {
                     });
                     headerAdapter.putType(value, annotation.itemType());
                     headerAdapter.getDatas().add(0, value);
+                    headerAdapter.setClickHolder(noViewHolder.getClickHolder());    // 加 header 嵌套布局时, 要传入 clickHolder, 以便把点击事件串起来。
                     headerAdapter.notifyDataSetChanged();
                 }
             }

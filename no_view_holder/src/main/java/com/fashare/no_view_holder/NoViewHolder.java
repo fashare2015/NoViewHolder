@@ -2,6 +2,7 @@ package com.fashare.no_view_holder;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -30,6 +31,10 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
     protected final String TAG = this.getClass().getSimpleName();
 
     private final Object mClickHolder;
+
+    public Object getClickHolder() {
+        return mClickHolder;
+    }
 
     // TODO: static
     private static Options mClickOptions = new ClickOptions(),
@@ -61,10 +66,14 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void onBind(Object holder, int pos, Options options) {
+        if(holder == null){
+            Log.d(TAG, "clickHolder or dataHolder is null!!! Nothing happens.");
+            return ;
+        }
         for (Field field : holder.getClass().getDeclaredFields()) {
             for (IBehavior<? extends Annotation> behavior : options.getMergedBehaviors()) {
                 if(behavior.isApplyedOn(field))
-                    behavior.onBind(itemView, field, holder);
+                    behavior.onBind(this, itemView, field, holder);
             }
         }
     }
