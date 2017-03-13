@@ -36,7 +36,7 @@ public @interface BindListView {
         }
 
         @Override
-        public void onBind(ListView targetView, BindListView annotation, List value) {
+        protected void onBind(ListView targetView, BindListView annotation, List value) {
             ListAdapter adapter = targetView.getAdapter();
             if(adapter == null)
                 targetView.setAdapter(new NoListViewAdapter<>(targetView.getContext(), annotation.layout(), value));

@@ -30,7 +30,7 @@ public @interface BindTextView {
         }
 
         @Override
-        public void onBind(TextView targetView, BindTextView annotation, String value) {
+        protected void onBind(TextView targetView, BindTextView annotation, String value) {
             targetView.setText(value);
         }
     }

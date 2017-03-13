@@ -30,7 +30,7 @@ public @interface BindClick {
         }
 
         @Override
-        public void onBind(View targetView, BindClick annotation, final View.OnClickListener value) {
+        protected void onBind(View targetView, BindClick annotation, final View.OnClickListener value) {
             targetView.setOnClickListener(value);
         }
     }

@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * Created by jinliangshan on 17/3/9.
  */
-public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
+public final class NoViewHolder extends RecyclerView.ViewHolder {
     protected final String TAG = this.getClass().getSimpleName();
 
     private final Object mClickHolder;
@@ -35,12 +35,12 @@ public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
     private static Options mClickOptions = new ClickOptions(),
             mDataOptions = new DataOptions();
 
-    public NoViewHolder<T> setClickOptions(Options clickOptions) {
+    public NoViewHolder setClickOptions(Options clickOptions) {
         mClickOptions = clickOptions;
         return this;
     }
 
-    public NoViewHolder<T> setDataOptions(Options dataOptions) {
+    public NoViewHolder setDataOptions(Options dataOptions) {
         mDataOptions = dataOptions;
         return this;
     }
@@ -51,11 +51,11 @@ public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
         onBind(clickHolder, 0, mClickOptions);
     }
 
-    public void notifyDataSetChanged(T dataHolder){
+    public void notifyDataSetChanged(Object dataHolder){
         notifyDataSetChanged(dataHolder, 0);
     }
 
-    public void notifyDataSetChanged(T dataHolder, int pos){
+    public void notifyDataSetChanged(Object dataHolder, int pos){
         onBind(dataHolder, pos, mDataOptions);
         onBind(mClickHolder, 0, mClickOptions);
     }
@@ -70,16 +70,16 @@ public final class NoViewHolder<T> extends RecyclerView.ViewHolder {
     }
 
     public static class Factory{
-        public static <T> NoViewHolder<T> create(Activity activity){
+        public static NoViewHolder create(Activity activity){
             return create(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0), activity);
         }
 
-        public static <T> NoViewHolder<T> create(View itemView){
+        public static NoViewHolder create(View itemView){
             return create(itemView, itemView);
         }
 
-        public static <T> NoViewHolder<T> create(View itemView, Object clickHolder){
-            return new NoViewHolder<>(itemView, clickHolder);
+        public static NoViewHolder create(View itemView, Object clickHolder){
+            return new NoViewHolder(itemView, clickHolder);
         }
     }
 

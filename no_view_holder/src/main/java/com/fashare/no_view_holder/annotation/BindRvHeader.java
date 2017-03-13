@@ -38,7 +38,7 @@ public @interface BindRvHeader {
         }
 
         @Override
-        public void onBind(RecyclerView targetView, final BindRvHeader annotation, final Object value) {}
+        protected void onBind(RecyclerView targetView, final BindRvHeader annotation, final Object value) {}
 
         @Override
         protected void onBind(RecyclerView targetView, BindRvHeader annotation, Object value, final Object dataHolder) {

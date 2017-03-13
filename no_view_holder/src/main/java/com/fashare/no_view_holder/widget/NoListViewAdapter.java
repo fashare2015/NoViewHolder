@@ -52,20 +52,20 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        NoViewHolder<T> viewHolder;
+        NoViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(mLayoutRes, parent, false);
             viewHolder = NoViewHolder.Factory.create(convertView);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (NoViewHolder<T>) convertView.getTag();
+            viewHolder = (NoViewHolder) convertView.getTag();
         }
 
         onBindViewHolder(viewHolder, position);
         return convertView;
     }
 
-    protected void onBindViewHolder(final NoViewHolder<T> holder, final int position) {
+    protected void onBindViewHolder(final NoViewHolder holder, final int position) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

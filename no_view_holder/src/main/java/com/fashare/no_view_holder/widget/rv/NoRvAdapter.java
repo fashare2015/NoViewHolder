@@ -25,7 +25,7 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
     private com.fashare.no_view_holder.widget.OnItemClickListener<T> mOnItemClickListener;
 
     HashMap<Object, Integer> mTypeRecorder = new HashMap<>();
-    HashMap<ViewHolder, NoViewHolder<T>> mViewHolderConvertor = new HashMap<>();
+    HashMap<ViewHolder, NoViewHolder> mViewHolderConvertor = new HashMap<>();
 
     public HashMap<Object, Integer> getTypeRecorder() {
         return mTypeRecorder;
@@ -40,11 +40,11 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
         return itemType != null? itemType: 0;
     }
 
-    public HashMap<ViewHolder, NoViewHolder<T>> getViewHolderConvertor() {
+    public HashMap<ViewHolder, NoViewHolder> getViewHolderConvertor() {
         return mViewHolderConvertor;
     }
 
-    public NoViewHolder<T> getNoViewHolder(ViewHolder holder) {
+    public NoViewHolder getNoViewHolder(ViewHolder holder) {
         return mViewHolderConvertor.get(holder);
     }
 
@@ -69,7 +69,7 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
     @Override
     public void onViewHolderCreated(ViewHolder holder, View itemView) {
 //        Log.d(TAG, "onViewHolderCreated: ");
-        NoViewHolder<T> noViewHolder = NoViewHolder.Factory.create(holder.itemView);
+        NoViewHolder noViewHolder = NoViewHolder.Factory.create(holder.itemView);
         mViewHolderConvertor.put(holder, noViewHolder);
     }
 

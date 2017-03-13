@@ -34,7 +34,7 @@ public @interface BindImageView {
         }
 
         @Override
-        public void onBind(ImageView targetView, BindImageView annotation, String value) {
+        protected void onBind(ImageView targetView, BindImageView annotation, String value) {
             ImageLoader.loadImage(targetView, value, annotation.placeHolder());
         }
     }

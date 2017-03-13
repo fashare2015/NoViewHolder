@@ -36,7 +36,7 @@ public @interface BindViewPager {
         }
 
         @Override
-        public void onBind(ViewPager targetView, BindViewPager annotation, List value) {
+        protected void onBind(ViewPager targetView, BindViewPager annotation, List value) {
             PagerAdapter adapter = targetView.getAdapter();
             if(adapter == null)
                 targetView.setAdapter(new NoViewPagerAdapter<>(targetView.getContext(), annotation.layout(), value));

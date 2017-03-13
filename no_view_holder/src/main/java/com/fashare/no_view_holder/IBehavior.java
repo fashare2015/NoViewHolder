@@ -58,10 +58,6 @@ public interface IBehavior<A extends Annotation> {
 
         protected abstract void onBindAbstract(View itemView, A annotation, DATA value, Object dataHolder);
 
-        public abstract void onBind(V targetView, A annotation, DATA value);
-
-        protected void onBind(V targetView, A annotation, DATA value, Object dataHolder){}
-
         @Override
         public A getAnnotation(Field field) {
             return field.getAnnotation(mAnnotationClazz);
@@ -104,6 +100,10 @@ public interface IBehavior<A extends Annotation> {
         }
 
         protected abstract @IdRes int getId(A annotation);
+
+        protected abstract void onBind(V targetView, A annotation, DATA value);
+
+        protected void onBind(V targetView, A annotation, DATA value, Object dataHolder){}
     }
 
     abstract class Group<A extends Annotation, DATA> extends Abstract<A, View, DATA>{
@@ -115,5 +115,7 @@ public interface IBehavior<A extends Annotation> {
         protected void onBindAbstract(View itemView, A annotation, DATA value, Object dataHolder) {
             onBind(itemView, annotation, value);
         }
+
+        protected abstract void onBind(View targetView, A annotation, DATA value);
     }
 }

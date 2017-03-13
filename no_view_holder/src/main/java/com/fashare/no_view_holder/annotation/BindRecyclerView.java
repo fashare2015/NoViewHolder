@@ -40,7 +40,7 @@ public @interface BindRecyclerView {
         }
 
         @Override
-        public void onBind(RecyclerView targetView, BindRecyclerView annotation, List value) {
+        protected void onBind(RecyclerView targetView, BindRecyclerView annotation, List value) {
             RecyclerView.Adapter adapter = targetView.getAdapter();
             if(adapter == null) {
                 LayoutManager lm = annotation.layoutManager();

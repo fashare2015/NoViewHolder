@@ -38,7 +38,7 @@ public @interface BindItemClick {
         }
 
         @Override
-        public void onBind(ViewGroup itemView, BindItemClick annotation, OnItemClickListener value) {
+        protected void onBind(ViewGroup itemView, BindItemClick annotation, OnItemClickListener value) {
             final View view = itemView.findViewById(annotation.id());
             if(view instanceof ListView){
                 ListView lv = (ListView) view;

@@ -72,13 +72,13 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        NoViewHolder<T> viewHolder = createViewHolder(container);
+        NoViewHolder viewHolder = createViewHolder(container);
         onBindViewHolder(viewHolder, position);
         return viewHolder.itemView;
     }
 
-    protected final NoViewHolder<T> createViewHolder(ViewGroup container) {
-        NoViewHolder<T> viewHolder;
+    protected final NoViewHolder createViewHolder(ViewGroup container) {
+        NoViewHolder viewHolder;
         viewHolder = NoViewHolder.Factory.create(LayoutInflater.from(mContext).inflate(mLayoutRes, container, false));
 
         if(viewHolder != null) {
@@ -90,7 +90,7 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
         return viewHolder;
     }
 
-    public void onBindViewHolder(final NoViewHolder<T> holder, final int position) {
+    public void onBindViewHolder(final NoViewHolder holder, final int position) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
