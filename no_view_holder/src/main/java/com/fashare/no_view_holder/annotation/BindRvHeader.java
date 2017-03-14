@@ -3,12 +3,12 @@ package com.fashare.no_view_holder.annotation;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.fashare.no_view_holder.IBehavior;
 import com.fashare.no_view_holder.NoViewHolder;
-import com.fashare.no_view_holder.widget.rv.ItemTypeDelegate;
-import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
-import com.zhy.adapter.recyclerview.base.ViewHolder;
+import com.fashare.no_view_holder.widget.rv.wrapper.HeaderAndFooterWrapper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -46,18 +46,21 @@ public @interface BindRvHeader {
             RecyclerView.Adapter adapter = targetView.getAdapter();
 //            if(adapter != null) {
                 // TODO: 应该放到 "初始化" 流程, 而不是放在 "onBind()" 下
-                NoRvAdapter headerAdapter = null;
-                if(adapter instanceof NoRvAdapter) {
-                    headerAdapter = (NoRvAdapter) adapter;
+                if(adapter instanceof HeaderAndFooterWrapper) {
+                    HeaderAndFooterWrapper headerAdapter = (HeaderAndFooterWrapper) adapter;
 
-                    headerAdapter.addItemViewDelegate(new ItemTypeDelegate(annotation.layout(), annotation.itemType(), headerAdapter){
-                        @Override
-                        public void convert(ViewHolder holder, Object data, int position) {
-                            mAdapter.getNoViewHolder(holder).notifyDataSetChanged(dataHolder);  // BindRvHeader 仅处理了setHead(), 需要递归解析 BindXXX
-                        }
-                    });
-                    headerAdapter.putType(value, annotation.itemType());
-                    headerAdapter.getDatas().add(0, value);
+//                    headerAdapter.addItemViewDelegate(new ItemTypeDelegate(annotation.layout(), annotation.itemType(), headerAdapter){
+//                        @Override
+//                        public void convert(ViewHolder holder, Object data, int position) {
+//                            mAdapter.getNoViewHolder(holder).notifyDataSetChanged(dataHolder);  // BindRvHeader 仅处理了setHead(), 需要递归解析 BindXXX
+//                        }
+//                    });
+//                    headerAdapter.putType(value, annotation.itemType());
+
+//                    headerAdapter.getDatas().add(0, value);
+                    View itemView = LayoutInflater.from(targetView.getContext()).inflate(annotation.layout(), targetView, false);
+                    itemView.setTag(dataHolder);
+                    headerAdapter.addHeaderView(itemView);
                     headerAdapter.notifyDataSetChanged();
                 }
 //            }

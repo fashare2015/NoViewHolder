@@ -8,6 +8,7 @@ import com.fashare.no_view_holder.IBehavior;
 import com.fashare.no_view_holder.NoViewHolder;
 import com.fashare.no_view_holder.widget.rv.ItemTypeDelegate;
 import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
+import com.fashare.no_view_holder.widget.rv.wrapper.HeaderAndFooterWrapper;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import java.lang.annotation.Retention;
@@ -56,11 +57,11 @@ public @interface BindRecyclerView {
                     noRvAdapter.getNoViewHolder(holder).notifyDataSetChanged(data, position);
                 }
             });
-            for (Object data : value)
-                noRvAdapter.putType(data, annotation.itemType());
+//            for (Object data : value)
+//                noRvAdapter.putType(data, annotation.itemType());
             // 加 header 嵌套布局时, 要传入 clickHolder, 以便把点击事件串起来。
             noRvAdapter.setClickHolder(noViewHolder.getClickHolder());
-            targetView.setAdapter(noRvAdapter);
+            targetView.setAdapter(new HeaderAndFooterWrapper(noRvAdapter));
         }
 
         @Override
@@ -76,9 +77,9 @@ public @interface BindRecyclerView {
 
             if(adapter instanceof NoRvAdapter) {
                 NoRvAdapter noRvAdapter = (NoRvAdapter) targetView.getAdapter();
-                for (Object data : value) {
-                    noRvAdapter.putType(data, annotation.itemType());
-                }
+//                for (Object data : value) {
+//                    noRvAdapter.putType(data, annotation.itemType());
+//                }
                 noRvAdapter.setDataList(value);
 
             }else

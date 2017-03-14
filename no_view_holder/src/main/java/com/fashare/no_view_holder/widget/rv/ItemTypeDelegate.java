@@ -30,7 +30,7 @@ public abstract class ItemTypeDelegate implements ItemViewDelegate<Object> {
 
     @Override
     public boolean isForViewType(Object item, int position) {
-        return mAdapter.getType(item) == mTargetType;
+        return true;
     }
 
     @Override

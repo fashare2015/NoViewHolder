@@ -43,7 +43,9 @@ public class LatestNews{
     @BindImageView(id = R.id.iv, placeHolder = R.mipmap.ic_launcher)
     private String img = "";
 
-    @BindRecyclerView(id = R.id.rv_article_list, layout = R.layout.item_article)
+    @BindRecyclerView(id = R.id.rv_article_list, layout = R.layout.item_article
+//            ,layoutManager = @LayoutManager(style = LayoutManager.Style.GRID, spanCount = 2)
+    )
     private List<ArticlePreview> stories;
 
     public List<ArticlePreview> getStories() {
