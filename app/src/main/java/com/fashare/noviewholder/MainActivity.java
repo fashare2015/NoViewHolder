@@ -16,8 +16,6 @@ import com.fashare.noviewholder.model.ArticlePreview;
 import com.fashare.noviewholder.model.LatestNews;
 import com.fashare.noviewholder.model.TopArticle;
 
-import java.util.Arrays;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Retrofit;
@@ -42,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     NoViewHolder mNoViewHolder;
 
-    private LatestNews mLatestNews = new LatestNews();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mNoViewHolder = new NoViewHolder.Factory(this)
-                .initView(mLatestNews)
+                .initView(new LatestNews())
                 .build();
 
 
@@ -88,13 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Action1<LatestNews>() {
                     @Override
                     public void call(LatestNews latestNews) {
-                        latestNews.setStrings(Arrays.asList(
-                                new ArticlePreview(),
-                                new ArticlePreview(),
-                                new ArticlePreview()
-                        ));
                         mSrlRefresh.setRefreshing(false);
-                        mNoViewHolder.notifyDataSetChanged(mLatestNews = latestNews);
+                        mNoViewHolder.notifyDataSetChanged(latestNews);
                     }
                 });
     }
