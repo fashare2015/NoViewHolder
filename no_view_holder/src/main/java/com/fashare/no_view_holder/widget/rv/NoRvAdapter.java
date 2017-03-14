@@ -24,23 +24,9 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
     @LayoutRes int mLayoutRes;
     private com.fashare.no_view_holder.widget.OnItemClickListener<T> mOnItemClickListener;
 
-//    HashMap<Object, Integer> mTypeRecorder = new HashMap<>();
     HashMap<ViewHolder, NoViewHolder> mViewHolderConvertor = new HashMap<>();
 
-//    public HashMap<Object, Integer> getTypeRecorder() {
-//        return mTypeRecorder;
-//    }
-
     private Object clickHolder = this;
-
-//    public void putType(Object obj, int itemType){
-//        mTypeRecorder.put(obj, itemType);
-//    }
-
-//    public int getType(Object item) {
-//        Integer itemType = mTypeRecorder.get(item);
-//        return itemType != null? itemType: 0;
-//    }
 
     public HashMap<ViewHolder, NoViewHolder> getViewHolderConvertor() {
         return mViewHolderConvertor;
@@ -90,14 +76,12 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
     }
 
     @Override
-    protected void setListener(ViewGroup parent, final ViewHolder holder, int viewType) {
-        super.setListener(parent, holder, viewType);
-//        Log.d(TAG, "setListener: ");
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        super.onBindViewHolder(holder, position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mOnItemClickListener != null) {
-                    int position = holder.getAdapterPosition();
+                if (mOnItemClickListener != null) {
                     mOnItemClickListener.onItemClick(holder.itemView, getDatas().get(position), position);
                 }
             }

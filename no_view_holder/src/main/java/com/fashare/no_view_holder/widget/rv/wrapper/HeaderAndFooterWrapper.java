@@ -1,7 +1,5 @@
 package com.fashare.no_view_holder.widget.rv.wrapper;
 
-import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +17,8 @@ import java.util.List;
 
 /**
  * Created by zhy on 16/6/23.
+ *
+ * copy from base-adapter, not by me!!
  */
 public class HeaderAndFooterWrapper extends NoRvAdapter
 {
@@ -52,10 +52,6 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
 
     public void setDataList(List dataList) {
         mInnerAdapter.setDataList(dataList);
-    }
-
-    private HeaderAndFooterWrapper(Context context, @LayoutRes int layoutRes) {
-        super(context, layoutRes);
     }
 
     public HeaderAndFooterWrapper(NoRvAdapter adapter) {

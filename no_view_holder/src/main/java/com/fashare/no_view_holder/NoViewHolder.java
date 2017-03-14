@@ -15,6 +15,7 @@ import com.fashare.no_view_holder.annotation.BindTextView;
 import com.fashare.no_view_holder.annotation.BindViewPager;
 import com.fashare.no_view_holder.annotation.click.BindClick;
 import com.fashare.no_view_holder.annotation.click.BindItemClick;
+import com.fashare.no_view_holder.annotation.click.BindLoadMore;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -174,7 +175,9 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
     public static class ClickOptions extends Options.Default{
         private static final List<? extends IBehavior<? extends Annotation>> sClickBehaviors = Arrays.asList(
                 new BindItemClick.Behavior(),
-                new BindClick.Behavior()
+                new BindClick.Behavior(),
+
+                new BindLoadMore.Behavior()
         );
 
         @Override

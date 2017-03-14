@@ -1,9 +1,7 @@
 package com.fashare.noviewholder.model;
 
-import com.fashare.no_view_holder.annotation.BindImageView;
 import com.fashare.no_view_holder.annotation.BindRecyclerView;
 import com.fashare.no_view_holder.annotation.BindRvHeader;
-import com.fashare.no_view_holder.annotation.BindTextView;
 import com.fashare.no_view_holder.annotation.BindViewPager;
 import com.fashare.no_view_holder.annotation.LayoutManager;
 import com.fashare.noviewholder.R;
@@ -26,22 +24,22 @@ public class LatestNews{
     @BindViewPager(id = R.id.vp_banner, layout = R.layout.item_banner)
     private List<TopArticle> top_stories;
 
-    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_classify, itemType = 4)
-    @BindRecyclerView(id = R.id.rv_in_header, layout = R.layout.item_article
-            ,layoutManager = @LayoutManager(style = LayoutManager.Style.GRID, spanCount = 4)
-    )
+//    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_classify, itemType = 4)
+//    @BindRecyclerView(id = R.id.rv_in_header, layout = R.layout.item_article
+//            ,layoutManager = @LayoutManager(style = LayoutManager.Style.GRID, spanCount = 4)
+//    )
     private List<ArticlePreview> mStrings = Collections.nCopies(8, new ArticlePreview());
 
-    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_text, itemType = 1)
-    @BindTextView(id = R.id.tv)
-    private String date = "";
+//    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_text, itemType = 1)
+//    @BindTextView(id = R.id.tv)
+//    private String date = "";
 
-    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_img, itemType = 2)
-    @BindImageView(id = R.id.iv, placeHolder = R.mipmap.ic_launcher)
-    private String img = "";
+//    @BindRvHeader(id = R.id.rv_article_list, layout = R.layout.layout_img, itemType = 2)
+//    @BindImageView(id = R.id.iv, placeHolder = R.mipmap.ic_launcher)
+//    private String img = "";
 
     @BindRecyclerView(id = R.id.rv_article_list, layout = R.layout.item_article
-//            ,layoutManager = @LayoutManager(style = LayoutManager.Style.GRID, spanCount = 2)
+            ,layoutManager = @LayoutManager(style = LayoutManager.Style.GRID, spanCount = 2)
     )
     private List<ArticlePreview> stories;
 

@@ -6,23 +6,53 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fashare.no_view_holder.NoViewHolder;
+import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.adapter.recyclerview.utils.WrapperUtils;
+
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
  * Created by zhy on 16/6/23.
  */
-public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+public class LoadMoreWrapper extends HeaderAndFooterWrapper
 {
     public static final int ITEM_TYPE_LOAD_MORE = Integer.MAX_VALUE - 2;
 
-    private RecyclerView.Adapter mInnerAdapter;
+    private NoRvAdapter mInnerAdapter;
     private View mLoadMoreView;
     private int mLoadMoreLayoutId;
 
-    public LoadMoreWrapper(RecyclerView.Adapter adapter)
+    public HashMap<ViewHolder, NoViewHolder> getViewHolderConvertor() {
+        return mInnerAdapter.getViewHolderConvertor();
+    }
+
+    public NoViewHolder getNoViewHolder(ViewHolder holder) {
+        return mInnerAdapter.getNoViewHolder(holder);
+    }
+
+    public void setClickHolder(Object clickHolder) {
+        mInnerAdapter.setClickHolder(clickHolder);
+    }
+
+    public Object getClickHolder() {
+        return mInnerAdapter.getClickHolder();
+    }
+
+    public void setOnItemClickListener(com.fashare.no_view_holder.widget.OnItemClickListener onItemClickListener) {
+        mInnerAdapter.setOnItemClickListener(onItemClickListener);
+    }
+
+    public void setDataList(List dataList) {
+        mInnerAdapter.setDataList(dataList);
+    }
+
+    public LoadMoreWrapper(NoRvAdapter adapter)
     {
+        super(adapter);
         mInnerAdapter = adapter;
     }
 
@@ -48,7 +78,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         if (viewType == ITEM_TYPE_LOAD_MORE)
         {
@@ -56,9 +86,13 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (mLoadMoreView != null)
             {
                 holder = ViewHolder.createViewHolder(parent.getContext(), mLoadMoreView);
+                NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.getConvertView(), mInnerAdapter.getClickHolder()).build();
+                getViewHolderConvertor().put(holder, noViewHolder);
             } else
             {
                 holder = ViewHolder.createViewHolder(parent.getContext(), parent, mLoadMoreLayoutId);
+                NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.getConvertView(), mInnerAdapter.getClickHolder()).build();
+                getViewHolderConvertor().put(holder, noViewHolder);
             }
             return holder;
         }
@@ -66,7 +100,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
+    public void onBindViewHolder(ViewHolder holder, int position)
     {
         if (isShowLoadMore(position))
         {
@@ -79,6 +113,7 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         mInnerAdapter.onBindViewHolder(holder, position);
     }
 
+    //TODO: 是这样代理么 ???
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView)
     {
@@ -158,5 +193,32 @@ public class LoadMoreWrapper<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     {
         mLoadMoreLayoutId = layoutId;
         return this;
+    }
+
+    // 代理 HeaderAndFooterWrapper
+    public void addHeaderView(View view)
+    {
+        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
+            ((HeaderAndFooterWrapper) mInnerAdapter).addHeaderView(view);
+    }
+
+    public void addFootView(View view)
+    {
+        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
+            ((HeaderAndFooterWrapper) mInnerAdapter).addFootView(view);
+    }
+
+    public int getHeadersCount()
+    {
+        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
+            ((HeaderAndFooterWrapper) mInnerAdapter).getHeadersCount();
+        return 0;
+    }
+
+    public int getFootersCount()
+    {
+        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
+            ((HeaderAndFooterWrapper) mInnerAdapter).getHeadersCount();
+        return 0;
     }
 }
