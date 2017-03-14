@@ -1,18 +1,21 @@
 package com.fashare.no_view_holder.widget.rv.wrapper;
 
-import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.fashare.no_view_holder.NoViewHolder;
+import com.fashare.no_view_holder.R;
 import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.adapter.recyclerview.utils.WrapperUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -25,8 +28,8 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
     private static final int BASE_ITEM_TYPE_HEADER = 100000;
     private static final int BASE_ITEM_TYPE_FOOTER = 200000;
 
-    private SparseArrayCompat<View> mHeaderViews = new SparseArrayCompat<>();
-    private SparseArrayCompat<View> mFootViews = new SparseArrayCompat<>();
+    private Map<Integer, View> mHeaderViews = new TreeMap<>();  // 按 key 排序
+    private Map<Integer, View> mFootViews = new TreeMap<>();  // 按 key 排序
 
     private NoRvAdapter mInnerAdapter;
 
@@ -72,7 +75,9 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
         } else if (mFootViews.get(viewType) != null)
         {
             ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), mFootViews.get(viewType));
-            NoViewHolder noViewHolder = new NoViewHolder.Factory(mHeaderViews.get(viewType), mInnerAdapter.getClickHolder()).build();
+            NoViewHolder noViewHolder = new NoViewHolder.Factory(mHeaderViews.get(viewType), mInnerAdapter.getClickHolder())
+                    .initView(holder.getConvertView().getTag(R.id.tag_data_holder))
+                    .build();
             getViewHolderConvertor().put(holder, noViewHolder);
             return holder;
         }
@@ -84,10 +89,10 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
     {
         if (isHeaderViewPos(position))
         {
-            return mHeaderViews.keyAt(position);
+            return (int)new ArrayList(mHeaderViews.keySet()).get(position);
         } else if (isFooterViewPos(position))
         {
-            return mFootViews.keyAt(position - getHeadersCount() - getRealItemCount());
+            return (int)new ArrayList(mFootViews.keySet()).get(position);
         }
         return mInnerAdapter.getItemViewType(position - getHeadersCount());
     }
@@ -103,12 +108,12 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
     {
         if (isHeaderViewPos(position))
         {
-            getNoViewHolder(holder).notifyDataSetChanged(holder.getConvertView().getTag());
+            getNoViewHolder(holder).notifyDataSetChanged(holder.getConvertView().getTag(R.id.tag_data_holder));
             return;
         }
         if (isFooterViewPos(position))
         {
-            getNoViewHolder(holder).notifyDataSetChanged(holder.getConvertView().getTag());
+            getNoViewHolder(holder).notifyDataSetChanged(holder.getConvertView().getTag(R.id.tag_data_holder));
             return;
         }
         mInnerAdapter.onBindViewHolder(holder, position - getHeadersCount());
@@ -167,12 +172,12 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
 
     public void addHeaderView(View view)
     {
-        mHeaderViews.put(mHeaderViews.size() + BASE_ITEM_TYPE_HEADER, view);
+        mHeaderViews.put((int)view.getTag(R.id.tag_item_type) + BASE_ITEM_TYPE_HEADER, view);
     }
 
     public void addFootView(View view)
     {
-        mFootViews.put(mFootViews.size() + BASE_ITEM_TYPE_FOOTER, view);
+        mFootViews.put((int)view.getTag(R.id.tag_item_type) + BASE_ITEM_TYPE_FOOTER, view);
     }
 
     public int getHeadersCount()

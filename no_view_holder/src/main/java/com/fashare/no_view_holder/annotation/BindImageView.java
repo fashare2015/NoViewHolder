@@ -21,7 +21,8 @@ public @interface BindImageView {
     int NO_DRAWABLE = -1;
 
     @IdRes int id();
-    int placeHolder() default NO_DRAWABLE;
+
+    int placeHolder() default NO_DRAWABLE;  // 占位图
 
     class Behavior extends IBehavior.Simple<BindImageView, ImageView, String>{
         public Behavior() {

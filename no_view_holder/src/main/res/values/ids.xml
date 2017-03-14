@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tag_data_holder" type="id"></item>
+    <item name="tag_item_type" type="id"></item>
+</resources>

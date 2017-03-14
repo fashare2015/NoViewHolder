@@ -77,7 +77,7 @@ public @interface BindRecyclerView {
             if(adapter instanceof NoRvAdapter) {
                 NoRvAdapter noRvAdapter = (NoRvAdapter) targetView.getAdapter();
                 noRvAdapter.setDataList(value);
-
+                adapter.notifyDataSetChanged();
             }else
                 adapter.notifyDataSetChanged();
         }

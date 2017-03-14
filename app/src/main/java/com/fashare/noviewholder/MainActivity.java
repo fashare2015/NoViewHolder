@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,37 +12,53 @@ import com.fashare.no_view_holder.NoViewHolder;
 import com.fashare.no_view_holder.annotation.BindTextView;
 import com.fashare.no_view_holder.annotation.click.BindClick;
 import com.fashare.no_view_holder.annotation.click.BindItemClick;
+import com.fashare.no_view_holder.annotation.click.BindLoadMore;
 import com.fashare.no_view_holder.widget.OnItemClickListener;
 import com.fashare.no_view_holder.widget.rv.wrapper.LoadMoreWrapper;
-import com.fashare.noviewholder.model.ArticlePreview;
-import com.fashare.noviewholder.model.LatestNews;
-import com.fashare.noviewholder.model.TopArticle;
+import com.fashare.noviewholder.model.HomeInfo;
+import com.fashare.noviewholder.model.MeiZhi;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+    // --- NoViewHolder 的 Behavior 全局配置 ---
     static NoViewHolder.Options mDataOptions = new NoViewHolder.DataOptions()
             .setBehaviors(new BindTextView.Behavior() {
                 @Override
                 public void onBind(TextView targetView, BindTextView annotation, String value) {
-                    targetView.setText("hahaha" + value);
+                    targetView.setText("fashare 到此一游" + value);
                 }
             });
 
     static {
-        NoViewHolder.setDataOptions(mDataOptions);
+//        NoViewHolder.setDataOptions(mDataOptions);
     }
+    // --- NoViewHolder 的 Behavior 全局配置 ---
 
+    // --- 一些不重要的变量 ---
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(Api.BASE_URL)
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    @BindView(R.id.srl_refresh)
+    SwipeRefreshLayout mSrlRefresh;
+    // --- 一些不重要的变量 ---
+
+    // NoViewHolder !!! 所有 view 的容器
     NoViewHolder mNoViewHolder;
 
-    LatestNews mLatestNews;
+    int curPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,102 +67,57 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mNoViewHolder = new NoViewHolder.Factory(this)
-                .initView(new LatestNews())
+                .initView(new HomeInfo())
                 .build();
 
-
-        mSrlRefresh.setOnRefreshListener(reload);
-        loadData();
-
-//        ((LoadMoreWrapper) mRvArticleList.getAdapter()).setOnLoadMoreListener(loadMore);
+        mSrlRefresh.setOnRefreshListener(() -> {
+            mHomeInfo = new HomeInfo(); // 清空数据
+            loadData(curPage = 0);
+        });
     }
 
-    private void loadData() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Api.BASE_URL)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    // --- 网络请求 ---
+    interface Api {
+        String BASE_URL = "http://gank.io/api/";
 
+        @GET("data/福利/"+10+"/{page}")
+        Observable<HomeInfo> getHomeInfo(@Path("page") int page);
+    }
+
+    HomeInfo mHomeInfo = new HomeInfo();
+
+    private void loadData(int page) {
         retrofit.create(Api.class)
-                .getLatestNewsObservable()
+                .getHomeInfo(page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<LatestNews>() {
-                    @Override
-                    public void call(LatestNews latestNews) {
+                .subscribe(homeInfo -> {
                         mSrlRefresh.setRefreshing(false);
-                        mNoViewHolder.notifyDataSetChanged(mLatestNews = latestNews);
-                    }
+
+                        mHomeInfo.getResults().addAll(homeInfo.getResults());           // 更新 妹子列表 info
+                        mHomeInfo.setBannerInfo(homeInfo.getResults().subList(0, 6));   // 更新 bannerInfo
+
+                        mNoViewHolder.notifyDataSetChanged(mHomeInfo);  // mHomeInfo 发生变化, 通知 UI 及时刷新
                 });
     }
+    // --- 网络请求 ---
 
-    @BindView(R.id.rv_article_list)
-    RecyclerView mRvArticleList;
-
-    @BindView(R.id.srl_refresh)
-    SwipeRefreshLayout mSrlRefresh;
-
-    SwipeRefreshLayout.OnRefreshListener reload = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            Toast.makeText(MainActivity.this, "reload", Toast.LENGTH_SHORT).show();
-            loadData();
-        }
-    };
-
-
-//    @BindLoadMore(id = R.id.rv_article_list, layout = R.layout.layout_load_more)
-    LoadMoreWrapper.OnLoadMoreListener loadMore = new LoadMoreWrapper.OnLoadMoreListener() {
-        @Override
-        public void onLoadMoreRequested() {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mLatestNews.getStories().add(new ArticlePreview());
-                    mNoViewHolder.notifyDataSetChanged(mLatestNews);
-                }
-            }, 2000);
-        }
-    };
+    @BindLoadMore(id = R.id.rv_meizhi, layout = R.layout.layout_load_more)
+    LoadMoreWrapper.OnLoadMoreListener loadMore = () -> new Handler().postDelayed(() -> loadData(curPage++), 2000);
 
     @BindItemClick(id = R.id.vp_banner)
-    OnItemClickListener<TopArticle> mOnTopArticleClicked = new OnItemClickListener<TopArticle>() {
-        @Override
-        public void onItemClick(View itemView, TopArticle data, int position) {
-            Toast.makeText(MainActivity.this, "click TopArticle" + position, Toast.LENGTH_SHORT).show();
-        }
-    };
+    OnItemClickListener<MeiZhi> clickBanner = (view, data, pos) -> toast("click Banner: " + pos + ", "+ data.toString());
 
-    @BindItemClick(id = R.id.rv_article_list)
-    OnItemClickListener<ArticlePreview> mOnArticlePreviewClicked = new OnItemClickListener<ArticlePreview>() {
-        @Override
-        public void onItemClick(View itemView, ArticlePreview data, int position) {
-            Toast.makeText(MainActivity.this, "click ArticlePreview: " + position + ", "+ data, Toast.LENGTH_SHORT).show();
-        }
-    };
+    @BindItemClick(id = R.id.rv_meizhi)
+    OnItemClickListener<MeiZhi> clickMeiZhi = (view, data, pos) -> toast("click MeiZhi: " + pos + ", "+ data.toString());
 
     @BindItemClick(id = R.id.rv_in_header)
-    OnItemClickListener<ArticlePreview> mOnRvInHeaderClicked = new OnItemClickListener<ArticlePreview>() {
-        @Override
-        public void onItemClick(View itemView, ArticlePreview data, int position) {
-            Toast.makeText(MainActivity.this, "click rv_in_header" + position, Toast.LENGTH_SHORT).show();
-        }
-    };
+    OnItemClickListener<MeiZhi> clickClissify = (view, data, pos) -> toast("click Clissify: " + pos + ", "+ data.toString());
 
-    @BindClick(id = R.id.tv)
-    View.OnClickListener mOnTvClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(MainActivity.this, "click tv", Toast.LENGTH_SHORT).show();
-        }
-    };
+    @BindClick(id = R.id.onsale_iv1)
+    View.OnClickListener clickOnSale1 = v -> toast("click OnSale1");
 
-    @BindClick(id = R.id.iv)
-    View.OnClickListener mOnIvClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(MainActivity.this, "click iv", Toast.LENGTH_SHORT).show();
-        }
-    };
+    void toast(String msg){
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+    }
 }

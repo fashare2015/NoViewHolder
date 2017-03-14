@@ -86,13 +86,14 @@ public class LoadMoreWrapper extends HeaderAndFooterWrapper
             if (mLoadMoreView != null)
             {
                 holder = ViewHolder.createViewHolder(parent.getContext(), mLoadMoreView);
-                NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.getConvertView(), mInnerAdapter.getClickHolder()).build();
-                getViewHolderConvertor().put(holder, noViewHolder);
+                // 不需要继续绑定
+//                NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.getConvertView(), mInnerAdapter.getClickHolder()).build();
+//                getViewHolderConvertor().put(holder, noViewHolder);
             } else
             {
                 holder = ViewHolder.createViewHolder(parent.getContext(), parent, mLoadMoreLayoutId);
-                NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.getConvertView(), mInnerAdapter.getClickHolder()).build();
-                getViewHolderConvertor().put(holder, noViewHolder);
+//                NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.getConvertView(), mInnerAdapter.getClickHolder()).build();
+//                getViewHolderConvertor().put(holder, noViewHolder);
             }
             return holder;
         }

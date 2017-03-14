@@ -50,7 +50,6 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
 
     public void setDataList(List<T> dataList) {
         mDatas = dataList;
-        notifyDataSetChanged();
     }
 
     public NoRvAdapter(Context context, @LayoutRes int layoutRes) {
@@ -69,7 +68,7 @@ public class NoRvAdapter<T> extends MultiItemTypeAdapter<T> {
         // 加 header 嵌套布局时, 要传入 clickHolder, 以便把点击事件串起来(传给header)。
         int pos = holder.getAdapterPosition();
         NoViewHolder noViewHolder = new NoViewHolder.Factory(holder.itemView, clickHolder)
-//                .initView(getDatas().get(0))    // TODO: pos ???
+                .initView(getDatas().get(0))    // pos 任意皆可, 用于初始化 data 中的注解
                 .build();
         mViewHolderConvertor.put(holder, noViewHolder);
         return holder;

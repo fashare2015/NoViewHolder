@@ -36,7 +36,7 @@ public @interface BindLoadMore {
         }
 
         @Override
-        protected void onBind(RecyclerView targetView, BindLoadMore annotation, LoadMoreWrapper.OnLoadMoreListener value) {
+        protected void onInitView(RecyclerView targetView, BindLoadMore annotation, LoadMoreWrapper.OnLoadMoreListener value) {
             if(value == null)
                 return ;
 
