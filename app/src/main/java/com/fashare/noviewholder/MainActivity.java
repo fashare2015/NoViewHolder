@@ -95,9 +95,14 @@ public class MainActivity extends AppCompatActivity {
                         mSrlRefresh.setRefreshing(false);
 
                         mHomeInfo.getResults().addAll(homeInfo.getResults());           // 更新 妹子列表 info
-                        mHomeInfo.setBannerInfo(homeInfo.getResults().subList(0, 6));   // 更新 bannerInfo
+                        if(homeInfo.getResults().size() >= 6)
+                            mHomeInfo.setBannerInfo(homeInfo.getResults().subList(0, 6));   // 更新 bannerInfo
 
                         mNoViewHolder.notifyDataSetChanged(mHomeInfo);  // mHomeInfo 发生变化, 通知 UI 及时刷新
+
+                }, throwable -> {
+                        mSrlRefresh.setRefreshing(false);
+                        toast("服务器跑路啦~");
                 });
     }
     // --- 网络请求 ---
