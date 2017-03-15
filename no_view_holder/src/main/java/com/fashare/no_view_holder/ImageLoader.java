@@ -107,7 +107,6 @@ public class ImageLoader {
      * 注意: bitmapTransform 与 外在的裁剪不兼容。即: https://github.com/wasabeef/glide-transformations/issues/54
      *
      *      1. 此时的 imageView 不能是自定义的圆角View.
-     *      2. scaleType 也不能设。
      *
      * 否则重复裁剪, 会有 bug.
      *

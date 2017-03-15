@@ -84,8 +84,8 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
         }
         for (Field field : holder.getClass().getDeclaredFields()) {
             for (IBehavior<? extends Annotation> behavior : options.getMergedBehaviors()) {
-                if(behavior.isApplyedOn(field))
-                    behavior.onInitView(this, itemView, field, holder);
+                if(behavior.isAppliedOn(field))
+                    behavior.onInitView(this, field, holder);
             }
         }
     }
@@ -96,7 +96,7 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
 
     public void notifyDataSetChanged(Object dataHolder, int pos){
         if(!mDataHolderClassSet.contains(dataHolder.getClass())){
-            //TODO:
+            // TODO: 是否严格划分 onInitView() 和 onBind(), 还是允许 onBind() 调用 onInitView() 进行 lazy init.
 //            throw new IllegalStateException(String.format("You must call NoViewHolder.init(dataHolder) before call NoViewHolder.notifyDataSetChanged(dataHolder)!!! [dataHolder: %s]", dataHolder));
         }
         onBind(dataHolder, pos, mDataOptions);
@@ -111,8 +111,8 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
 
         for (IBehavior<? extends Annotation> behavior : options.getMergedBehaviors()){
             for (Field field : holder.getClass().getDeclaredFields()) {
-                if(behavior.isApplyedOn(field))
-                    behavior.onBind(this, itemView, field, holder);
+                if(behavior.isAppliedOn(field))
+                    behavior.onBind(this, field, holder);
             }
         }
     }

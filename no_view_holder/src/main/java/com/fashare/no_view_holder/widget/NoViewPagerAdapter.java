@@ -23,7 +23,7 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
     protected Context mContext;
     @LayoutRes int mLayoutRes;
     private List<T> mDataList;
-    private OnItemClickListener<T> mOnItemClickListener;
+    private NoOnItemClickListener<T> mNoOnItemClickListener;
 
     private Object clickHolder = this;
 
@@ -46,8 +46,8 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
         notifyDataSetChanged();
     }
 
-    public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
+    public void setNoOnItemClickListener(NoOnItemClickListener<T> noOnItemClickListener) {
+        mNoOnItemClickListener = noOnItemClickListener;
     }
 
     public void setClickHolder(Object clickHolder) {
@@ -103,8 +103,8 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mOnItemClickListener != null)
-                    mOnItemClickListener.onItemClick(holder.itemView, mDataList.get(position), position);
+                if(mNoOnItemClickListener != null)
+                    mNoOnItemClickListener.onItemClick(holder.itemView, mDataList.get(position), position);
             }
         });
 

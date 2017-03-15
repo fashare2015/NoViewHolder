@@ -18,12 +18,14 @@ import java.util.List;
  * Date: 2017-03-09
  * Time: 23:32
  * <br/><br/>
+ *
+ * 基于普通的 ArrayAdapter
  */
 public class NoListViewAdapter<T> extends ArrayAdapter<T> {
     protected final String TAG = this.getClass().getSimpleName();
     @LayoutRes int mLayoutRes;
     private List<T> mDataList;
-    private OnItemClickListener<T> mOnItemClickListener;
+    private NoOnItemClickListener<T> mNoOnItemClickListener;
 
     private Object clickHolder = this;
 
@@ -36,8 +38,8 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
         notifyDataSetChanged();
     }
 
-    public void setOnItemClickListener(OnItemClickListener<T> onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
+    public void setNoOnItemClickListener(NoOnItemClickListener<T> noOnItemClickListener) {
+        mNoOnItemClickListener = noOnItemClickListener;
     }
 
     public void setClickHolder(Object clickHolder) {
@@ -77,8 +79,8 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mOnItemClickListener != null)
-                    mOnItemClickListener.onItemClick(holder.itemView, getItem(position), position);
+                if(mNoOnItemClickListener != null)
+                    mNoOnItemClickListener.onItemClick(holder.itemView, getItem(position), position);
             }
         });
 

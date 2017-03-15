@@ -7,9 +7,11 @@ import android.view.ViewGroup;
 
 import com.fashare.no_view_holder.NoViewHolder;
 import com.fashare.no_view_holder.R;
+import com.fashare.no_view_holder.widget.NoOnItemClickListener;
 import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.adapter.recyclerview.utils.WrapperUtils;
+import com.zhy.adapter.recyclerview.wrapper.HeaderAndFooterWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +23,13 @@ import java.util.TreeMap;
 /**
  * Created by zhy on 16/6/23.
  *
- * copy from base-adapter, not by me!!
+ * 基于 {@link HeaderAndFooterWrapper} 修改.
+ *
+ * 1. 封装了 {@link NoViewHolder}
+ *
+ * 2. 增加了排序功能, 按照 itemType 排序
  */
-public class HeaderAndFooterWrapper extends NoRvAdapter
+public class NoHeaderAndFooterWrapper extends NoRvAdapter
 {
     private static final int BASE_ITEM_TYPE_HEADER = 100000;
     private static final int BASE_ITEM_TYPE_FOOTER = 200000;
@@ -49,15 +55,15 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
         return mInnerAdapter.getClickHolder();
     }
 
-    public void setOnItemClickListener(com.fashare.no_view_holder.widget.OnItemClickListener onItemClickListener) {
-        mInnerAdapter.setOnItemClickListener(onItemClickListener);
+    public void setNoOnItemClickListener(NoOnItemClickListener noOnItemClickListener) {
+        mInnerAdapter.setNoOnItemClickListener(noOnItemClickListener);
     }
 
     public void setDataList(List dataList) {
         mInnerAdapter.setDataList(dataList);
     }
 
-    public HeaderAndFooterWrapper(NoRvAdapter adapter) {
+    public NoHeaderAndFooterWrapper(NoRvAdapter adapter) {
         super(null, 0);
         mInnerAdapter = adapter;
     }
@@ -68,14 +74,16 @@ public class HeaderAndFooterWrapper extends NoRvAdapter
         if (mHeaderViews.get(viewType) != null)
         {
             ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), mHeaderViews.get(viewType));
-            NoViewHolder noViewHolder = new NoViewHolder.Factory(mHeaderViews.get(viewType), mInnerAdapter.getClickHolder()).build();
+            NoViewHolder noViewHolder = new NoViewHolder.Factory(mHeaderViews.get(viewType), mInnerAdapter.getClickHolder())
+                    .initView(holder.getConvertView().getTag(R.id.tag_data_holder))
+                    .build();
             getViewHolderConvertor().put(holder, noViewHolder);
             return holder;
 
         } else if (mFootViews.get(viewType) != null)
         {
             ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), mFootViews.get(viewType));
-            NoViewHolder noViewHolder = new NoViewHolder.Factory(mHeaderViews.get(viewType), mInnerAdapter.getClickHolder())
+            NoViewHolder noViewHolder = new NoViewHolder.Factory(mFootViews.get(viewType), mInnerAdapter.getClickHolder())
                     .initView(holder.getConvertView().getTag(R.id.tag_data_holder))
                     .build();
             getViewHolderConvertor().put(holder, noViewHolder);

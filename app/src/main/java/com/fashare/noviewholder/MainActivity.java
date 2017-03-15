@@ -13,8 +13,8 @@ import com.fashare.no_view_holder.annotation.BindTextView;
 import com.fashare.no_view_holder.annotation.click.BindClick;
 import com.fashare.no_view_holder.annotation.click.BindItemClick;
 import com.fashare.no_view_holder.annotation.click.BindLoadMore;
-import com.fashare.no_view_holder.widget.OnItemClickListener;
-import com.fashare.no_view_holder.widget.rv.wrapper.LoadMoreWrapper;
+import com.fashare.no_view_holder.widget.NoOnItemClickListener;
+import com.fashare.no_view_holder.widget.rv.wrapper.NoLoadMoreWrapper;
 import com.fashare.noviewholder.model.HomeInfo;
 import com.fashare.noviewholder.model.MeiZhi;
 
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     static NoViewHolder.Options mDataOptions = new NoViewHolder.DataOptions()
             .setBehaviors(new BindTextView.Behavior() {
                 @Override
-                public void onBind(TextView targetView, BindTextView annotation, String value) {
+                public void onBind(TextView targetView, BindTextView annotation, Object value) {
                     targetView.setText("fashare 到此一游" + value);
                 }
             });
@@ -108,16 +108,16 @@ public class MainActivity extends AppCompatActivity {
     // --- 网络请求 ---
 
     @BindLoadMore(id = R.id.rv_meizhi, layout = R.layout.layout_load_more)
-    LoadMoreWrapper.OnLoadMoreListener loadMore = () -> new Handler().postDelayed(() -> loadData(curPage++), 2000);
+    NoLoadMoreWrapper.OnLoadMoreListener loadMore = () -> new Handler().postDelayed(() -> loadData(curPage++), 2000);
 
     @BindItemClick(id = R.id.vp_banner)
-    OnItemClickListener<MeiZhi> clickBanner = (view, data, pos) -> toast("click Banner: " + pos + ", "+ data.toString());
+    NoOnItemClickListener<MeiZhi> clickBanner = (view, data, pos) -> toast("click Banner: " + pos + ", "+ data.toString());
 
     @BindItemClick(id = R.id.rv_meizhi)
-    OnItemClickListener<MeiZhi> clickMeiZhi = (view, data, pos) -> toast("click MeiZhi: " + pos + ", "+ data.toString());
+    NoOnItemClickListener<MeiZhi> clickMeiZhi = (view, data, pos) -> toast("click MeiZhi: " + pos + ", "+ data.toString());
 
     @BindItemClick(id = R.id.rv_in_header)
-    OnItemClickListener<MeiZhi> clickClissify = (view, data, pos) -> toast("click Clissify: " + pos + ", "+ data.toString());
+    NoOnItemClickListener<MeiZhi> clickClissify = (view, data, pos) -> toast("click Clissify: " + pos + ", "+ data.toString());
 
     @BindClick(id = R.id.onsale_iv1)
     View.OnClickListener clickOnSale1 = v -> toast("click OnSale1");

@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fashare.no_view_holder.NoViewHolder;
+import com.fashare.no_view_holder.widget.NoOnItemClickListener;
 import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.adapter.recyclerview.utils.WrapperUtils;
+import com.zhy.adapter.recyclerview.wrapper.LoadMoreWrapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +19,12 @@ import java.util.List;
 
 /**
  * Created by zhy on 16/6/23.
+ *
+ * 基于 {@link LoadMoreWrapper} 修改.
+ *
+ * 1. 封装了 {@link NoViewHolder}
  */
-public class LoadMoreWrapper extends HeaderAndFooterWrapper
+public class NoLoadMoreWrapper extends NoHeaderAndFooterWrapper
 {
     public static final int ITEM_TYPE_LOAD_MORE = Integer.MAX_VALUE - 2;
 
@@ -42,15 +48,15 @@ public class LoadMoreWrapper extends HeaderAndFooterWrapper
         return mInnerAdapter.getClickHolder();
     }
 
-    public void setOnItemClickListener(com.fashare.no_view_holder.widget.OnItemClickListener onItemClickListener) {
-        mInnerAdapter.setOnItemClickListener(onItemClickListener);
+    public void setNoOnItemClickListener(NoOnItemClickListener noOnItemClickListener) {
+        mInnerAdapter.setNoOnItemClickListener(noOnItemClickListener);
     }
 
     public void setDataList(List dataList) {
         mInnerAdapter.setDataList(dataList);
     }
 
-    public LoadMoreWrapper(NoRvAdapter adapter)
+    public NoLoadMoreWrapper(NoRvAdapter adapter)
     {
         super(adapter);
         mInnerAdapter = adapter;
@@ -175,7 +181,7 @@ public class LoadMoreWrapper extends HeaderAndFooterWrapper
 
     private OnLoadMoreListener mOnLoadMoreListener;
 
-    public LoadMoreWrapper setOnLoadMoreListener(OnLoadMoreListener loadMoreListener)
+    public NoLoadMoreWrapper setOnLoadMoreListener(OnLoadMoreListener loadMoreListener)
     {
         if (loadMoreListener != null)
         {
@@ -184,42 +190,42 @@ public class LoadMoreWrapper extends HeaderAndFooterWrapper
         return this;
     }
 
-    public LoadMoreWrapper setLoadMoreView(View loadMoreView)
+    public NoLoadMoreWrapper setLoadMoreView(View loadMoreView)
     {
         mLoadMoreView = loadMoreView;
         return this;
     }
 
-    public LoadMoreWrapper setLoadMoreView(int layoutId)
+    public NoLoadMoreWrapper setLoadMoreView(int layoutId)
     {
         mLoadMoreLayoutId = layoutId;
         return this;
     }
 
-    // 代理 HeaderAndFooterWrapper
+    // 代理 NoHeaderAndFooterWrapper
     public void addHeaderView(View view)
     {
-        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
-            ((HeaderAndFooterWrapper) mInnerAdapter).addHeaderView(view);
+        if(mInnerAdapter instanceof NoHeaderAndFooterWrapper)
+            ((NoHeaderAndFooterWrapper) mInnerAdapter).addHeaderView(view);
     }
 
     public void addFootView(View view)
     {
-        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
-            ((HeaderAndFooterWrapper) mInnerAdapter).addFootView(view);
+        if(mInnerAdapter instanceof NoHeaderAndFooterWrapper)
+            ((NoHeaderAndFooterWrapper) mInnerAdapter).addFootView(view);
     }
 
     public int getHeadersCount()
     {
-        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
-            ((HeaderAndFooterWrapper) mInnerAdapter).getHeadersCount();
+        if(mInnerAdapter instanceof NoHeaderAndFooterWrapper)
+            ((NoHeaderAndFooterWrapper) mInnerAdapter).getHeadersCount();
         return 0;
     }
 
     public int getFootersCount()
     {
-        if(mInnerAdapter instanceof HeaderAndFooterWrapper)
-            ((HeaderAndFooterWrapper) mInnerAdapter).getHeadersCount();
+        if(mInnerAdapter instanceof NoHeaderAndFooterWrapper)
+            ((NoHeaderAndFooterWrapper) mInnerAdapter).getHeadersCount();
         return 0;
     }
 }

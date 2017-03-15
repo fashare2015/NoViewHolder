@@ -13,6 +13,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Created by apple on 17-3-10.
+ *
+ * 点击事件 for View
  */
 @Target(FIELD)
 @Retention(RUNTIME)

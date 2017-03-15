@@ -9,7 +9,7 @@ import android.view.View;
 import com.fashare.no_view_holder.IBehavior;
 import com.fashare.no_view_holder.NoViewHolder;
 import com.fashare.no_view_holder.R;
-import com.fashare.no_view_holder.widget.rv.wrapper.HeaderAndFooterWrapper;
+import com.fashare.no_view_holder.widget.rv.wrapper.NoHeaderAndFooterWrapper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -19,6 +19,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Created by apple on 16-11-19.
+ *
+ * Binder for Header of RecyclerView.
+ *
+ * The feild annotated by this annotation will be automatically added into RecyclerView's Header
  */
 @Target(FIELD)
 @Retention(RUNTIME)
@@ -47,8 +51,8 @@ public @interface BindRvHeader {
             RecyclerView.Adapter adapter = targetView.getAdapter();
 //            if(adapter != null) {
                 // TODO: 应该放到 "初始化" 流程, 而不是放在 "onBind()" 下
-                if(adapter instanceof HeaderAndFooterWrapper) {
-                    HeaderAndFooterWrapper headerAdapter = (HeaderAndFooterWrapper) adapter;
+                if(adapter instanceof NoHeaderAndFooterWrapper) {
+                    NoHeaderAndFooterWrapper headerAdapter = (NoHeaderAndFooterWrapper) adapter;
                     View itemView = LayoutInflater.from(targetView.getContext()).inflate(annotation.layout(), targetView, false);
                     itemView.setTag(R.id.tag_data_holder, dataHolder);
                     itemView.setTag(R.id.tag_item_type, annotation.itemType());

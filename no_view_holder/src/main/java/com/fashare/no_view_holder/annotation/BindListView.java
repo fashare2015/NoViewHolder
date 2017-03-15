@@ -18,6 +18,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Created by apple on 16-11-19.
+ *
+ * Binder for ListView
  */
 @Target(FIELD)
 @Retention(RUNTIME)

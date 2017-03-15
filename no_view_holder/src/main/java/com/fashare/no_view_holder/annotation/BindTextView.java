@@ -13,15 +13,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Created by apple on 16-11-19.
+ *
+ * Binder for TextView
  */
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface BindTextView {
     @IdRes int id();
 
-    class Behavior extends IBehavior.Simple<BindTextView, TextView, String>{
+    class Behavior extends IBehavior.Simple<BindTextView, TextView, Object>{
         public Behavior() {
-            super(BindTextView.class, String.class);
+            super(BindTextView.class, Object.class);
         }
 
         @Override
@@ -30,8 +32,8 @@ public @interface BindTextView {
         }
 
         @Override
-        protected void onBind(TextView targetView, BindTextView annotation, String value) {
-            targetView.setText(value);
+        protected void onBind(TextView targetView, BindTextView annotation, Object value) {
+            targetView.setText(String.valueOf(value));
         }
     }
 }

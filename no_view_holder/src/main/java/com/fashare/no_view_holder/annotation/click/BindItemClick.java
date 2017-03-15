@@ -10,7 +10,7 @@ import android.widget.ListView;
 import com.fashare.no_view_holder.IBehavior;
 import com.fashare.no_view_holder.widget.NoListViewAdapter;
 import com.fashare.no_view_holder.widget.NoViewPagerAdapter;
-import com.fashare.no_view_holder.widget.OnItemClickListener;
+import com.fashare.no_view_holder.widget.NoOnItemClickListener;
 import com.fashare.no_view_holder.widget.rv.NoRvAdapter;
 
 import java.lang.annotation.Retention;
@@ -21,15 +21,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Created by apple on 17-3-10.
+ *
+ * 点击事件 for ListView、RecyclerView、ViewPager
  */
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface BindItemClick {
     @IdRes int id();
 
-    class Behavior extends IBehavior.Simple<BindItemClick, ViewGroup, OnItemClickListener>{
+    class Behavior extends IBehavior.Simple<BindItemClick, ViewGroup, NoOnItemClickListener>{
         public Behavior() {
-            super(BindItemClick.class, OnItemClickListener.class);
+            super(BindItemClick.class, NoOnItemClickListener.class);
         }
 
         @Override
@@ -38,25 +40,25 @@ public @interface BindItemClick {
         }
 
         @Override
-        protected void onInitView(ViewGroup itemView, BindItemClick annotation, OnItemClickListener value) {
+        protected void onInitView(ViewGroup itemView, BindItemClick annotation, NoOnItemClickListener value) {
             final View view = itemView.findViewById(annotation.id());
             if(view instanceof ListView){
                 ListView lv = (ListView) view;
                 NoListViewAdapter adapter = (NoListViewAdapter) lv.getAdapter();
                 if(adapter != null)
-                    adapter.setOnItemClickListener(value);
+                    adapter.setNoOnItemClickListener(value);
 
             }else if(view instanceof RecyclerView){
                 RecyclerView rv = (RecyclerView) view;
                 NoRvAdapter adapter = (NoRvAdapter) rv.getAdapter();
                 if(adapter != null)
-                    adapter.setOnItemClickListener(value);
+                    adapter.setNoOnItemClickListener(value);
 
             }else if(view instanceof ViewPager){
                 ViewPager vp = (ViewPager) view;
                 NoViewPagerAdapter adapter = (NoViewPagerAdapter) vp.getAdapter();
                 if(adapter != null)
-                    adapter.setOnItemClickListener(value);
+                    adapter.setNoOnItemClickListener(value);
 
             }else{
                 throw new UnsupportedOperationException(String.format("Field[%s] which annotated by %s must instance of %s、%s or %s!!!",

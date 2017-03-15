@@ -15,7 +15,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * User: fashare(153614131@qq.com)
  * Date: 2017-03-09
  * Time: 22:51
- * <br/><br/>
+ *
+ * LayoutManager for RecyclerView
  */
 @Retention(RUNTIME)
 public @interface LayoutManager {
