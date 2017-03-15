@@ -27,6 +27,9 @@ import java.util.Set;
 
 /**
  * Created by jinliangshan on 17/3/9.
+ *
+ * 门面模式, 对外交互唯一接口.
+ * UI 容器: 封装了所有 dataHolder 和 clickHolder 中所注解的 View 实例.
  */
 public final class NoViewHolder extends RecyclerView.ViewHolder {
     protected final String TAG = this.getClass().getSimpleName();
@@ -41,23 +44,25 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
 
     // TODO: static
     private static Options mClickOptions = new ClickOptions(),
-            mDataOptions = new DataOptions(),
-            mExtraOptions = new Options.Default(){
-                @Override
-                protected Set<? extends IBehavior<? extends Annotation>> getDefaultBehaviors() {
-                    return new HashSet<>(Arrays.asList(new BindRvHeader.Behavior()));
-                }
-            };
+            mDataOptions = new DataOptions();
 
+    /**
+     * 全局配置 ClickOptions: {@link BindClick}, {@link BindItemClick}, {@link BindLoadMore}
+     * @param clickOptions
+     */
     public static void setClickOptions(Options clickOptions) {
         mClickOptions = clickOptions;
     }
 
+    /**
+     * 全局配置 DataOptions: 其他所有 BindXXX
+     * @param dataOptions
+     */
     public static void setDataOptions(Options dataOptions) {
         mDataOptions = dataOptions;
     }
 
-    private NoViewHolder(Factory builder) {
+    private NoViewHolder(Builder builder) {
         super(builder.mItemView);
         mClickHolder = builder.mClickHolder;
         mDataHolderList = builder.mDataHolderList;
@@ -68,12 +73,33 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
             onInitView(dataHolder, mDataOptions);
         }
 
-        // 2. adapter 准备好以后, 嵌套的 @BindRvHeader 额外处理
-//        for (Object dataHolder: mDataHolderList) {
-//            onInitView(dataHolder, mExtraOptions);
-//        }
+        // 2. view 和 adapter 都准备好以后, 绑定 click() 和 itemClick()
+        onInitView(mClickHolder, mClickOptions);
+    }
 
-        // 3. view 和 adapter 都准备好以后, 绑定 click() 和 itemClick()
+    /**
+     * 通知 dataHolder 发生改变, 更新 UI.
+     * 通常调用于 Activity, Fragment, 自定义View 等.
+     *
+     * @param dataHolder
+     */
+    public void notifyDataSetChanged(Object dataHolder){
+        notifyDataSetChanged(dataHolder, 0);
+    }
+
+    /**
+     * 通知 dataHolder 发生改变, 更新 UI.
+     * 通常调用于 各种 Adapter, 需带上一个 position.
+     *
+     * @param dataHolder
+     * @param pos
+     */
+    public void notifyDataSetChanged(Object dataHolder, int pos){
+        if(!mDataHolderClassSet.contains(dataHolder.getClass())){
+            // TODO: 是否严格划分 onInitView() 和 onBind(), 还是允许 onBind() 调用 onInitView() 进行 lazy init.
+//            throw new IllegalStateException(String.format("You must call NoViewHolder.init(dataHolder) before call NoViewHolder.notifyDataSetChanged(dataHolder)!!! [dataHolder: %s]", dataHolder));
+        }
+        onBind(dataHolder, pos, mDataOptions);
         onInitView(mClickHolder, mClickOptions);
     }
 
@@ -90,19 +116,6 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void notifyDataSetChanged(Object dataHolder){
-        notifyDataSetChanged(dataHolder, 0);
-    }
-
-    public void notifyDataSetChanged(Object dataHolder, int pos){
-        if(!mDataHolderClassSet.contains(dataHolder.getClass())){
-            // TODO: 是否严格划分 onInitView() 和 onBind(), 还是允许 onBind() 调用 onInitView() 进行 lazy init.
-//            throw new IllegalStateException(String.format("You must call NoViewHolder.init(dataHolder) before call NoViewHolder.notifyDataSetChanged(dataHolder)!!! [dataHolder: %s]", dataHolder));
-        }
-        onBind(dataHolder, pos, mDataOptions);
-        onInitView(mClickHolder, mClickOptions);
-    }
-
     private void onBind(Object holder, int pos, Options options) {
         if(holder == null){
             Log.e(TAG, "clickHolder or dataHolder is null!!! Nothing happens.");
@@ -117,22 +130,47 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public static class Factory{
+    /**
+     * Builder 模式
+     */
+    public static class Builder {
         private View mItemView;
         private Object mClickHolder;
         private List<?> mDataHolderList = new ArrayList<>();
         private Set<Class<?>> mDataHolderClassSet = new HashSet<>();
 
-        public Factory(Activity activity){
+        /**
+         * 为方便 Activity 使用而加的构造器.
+         *
+         * 1. ContentView 作为 itemView.
+         * 2. activity 作为 clickHolder.
+         *
+         * @param activity
+         */
+        public Builder(Activity activity){
             this(((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0), activity);
         }
 
-        public Factory(View itemView, Object clickHolder) {
+        /**
+         * 1. itemView 作为 rootView, 之后 dataHolder 里注解的 R.id.XXX 要确保在这个 rootView 布局中.
+         * 2. 指定一个 clickHolder 存放你的 OnClick 回调, 通常用 this 即可.
+         *
+         * @param itemView 即 {@link RecyclerView.ViewHolder#itemView}, 相当于 rootView
+         * @param clickHolder BindOnClick 等注解所在的类.
+         */
+        public Builder(View itemView, Object clickHolder) {
             mItemView = itemView;
             mClickHolder = clickHolder;
         }
 
-        public Factory initView(Object... dataHolderList){
+        /**
+         * 必须注入 "带有注解配置的 dataHolder", 以便根据 R.id.XXX 初始化相应的 View 和 Adapter.
+         * 为后续的 {@link #notifyDataSetChanged(Object)} 做准备, 否则可能导致找不到控件.
+         *
+         * @param dataHolderList new 一个带有注解配置的类, 如 new HomeInfo()
+         * @return
+         */
+        public Builder initView(Object... dataHolderList){
             mDataHolderList = Arrays.asList(dataHolderList);
             for (Object item : dataHolderList)
                 mDataHolderClassSet.add(item.getClass());
@@ -144,9 +182,23 @@ public final class NoViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    /**
+     * BindXXX.Behavior 的集合
+     */
     public interface Options{
+        /**
+         * 合并 "用户自定义Behavior" 和 "内置Behavior".
+         *
+         * 前者可以覆盖(override)后者
+         * @return
+         */
         Set<? extends IBehavior<? extends Annotation>> getMergedBehaviors();
 
+        /**
+         * 设置 "用户自定义Behavior"
+         * @param customizedBehaviors
+         * @return
+         */
         Options setBehaviors(IBehavior<? extends Annotation>... customizedBehaviors);
 
         abstract class Default implements Options{

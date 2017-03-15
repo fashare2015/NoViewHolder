@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mNoViewHolder = new NoViewHolder.Factory(this)
+        mNoViewHolder = new NoViewHolder.Builder(this)
                 .initView(new HomeInfo())
                 .build();
 

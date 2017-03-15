@@ -86,7 +86,7 @@ public class NoViewPagerAdapter<T> extends PagerAdapter {
     protected final NoViewHolder createViewHolder(ViewGroup container, int position) {
         NoViewHolder viewHolder;
         View itemView = LayoutInflater.from(mContext).inflate(mLayoutRes, container, false);
-        viewHolder = new NoViewHolder.Factory(itemView, clickHolder)
+        viewHolder = new NoViewHolder.Builder(itemView, clickHolder)
                 .initView(getDataList().get(position))
                 .build();
 

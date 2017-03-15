@@ -1,7 +1,6 @@
 package com.fashare.no_view_holder;
 
 import android.support.annotation.IdRes;
-import android.util.Log;
 import android.view.View;
 
 import com.fashare.no_view_holder.annotation.BindTextView;
@@ -109,7 +108,7 @@ public interface IBehavior<A extends Annotation> {
                 Object value = field.get(dataHolder);
 
                 if(mValueClazz.isAssignableFrom(field.getType())) {
-                    Log.d(TAG, field.getName() + ": " + (value==null? "null": value.toString()));
+//                    Log.d(TAG, field.getName() + ": " + (value==null? "null": value.toString()));
 
                     if(callback != null)
                         callback.call(annotation, (DATA)value);
@@ -171,7 +170,8 @@ public interface IBehavior<A extends Annotation> {
                 onInitView(noViewHolder, targetView, annotation, value, dataHolder);
             }else{
                 // TODO: getId() 不再打印纯数字!
-                Log.e(TAG, String.format("%s with id(%d) is not found!!!", annotation.toString(), getId(annotation)));
+                // TODO: 去掉不正确的 "找不到id" 提示
+//                Log.e(TAG, String.format("%s with id(%d) is not found!!!", annotation.toString(), getId(annotation)));
             }
         }
 
@@ -194,7 +194,8 @@ public interface IBehavior<A extends Annotation> {
                 onBind(noViewHolder, targetView, annotation, value, dataHolder);
             }else{
                 // TODO: getId() 不再打印纯数字!
-                Log.e(TAG, String.format("%s with id(%d) is not found!!!", annotation.toString(), getId(annotation)));
+                // TODO: 去掉不正确的 "找不到id" 提示
+//                Log.e(TAG, String.format("%s with id(%d) is not found!!!", annotation.toString(), getId(annotation)));
             }
         }
 

@@ -63,7 +63,7 @@ public class NoListViewAdapter<T> extends ArrayAdapter<T> {
         NoViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(mLayoutRes, parent, false);
-            viewHolder = new NoViewHolder.Factory(convertView, clickHolder)
+            viewHolder = new NoViewHolder.Builder(convertView, clickHolder)
                     .initView(getItem(position))
                     .build();
             convertView.setTag(viewHolder);

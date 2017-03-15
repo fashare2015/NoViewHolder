@@ -74,7 +74,7 @@ public class NoHeaderAndFooterWrapper extends NoRvAdapter
         if (mHeaderViews.get(viewType) != null)
         {
             ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), mHeaderViews.get(viewType));
-            NoViewHolder noViewHolder = new NoViewHolder.Factory(mHeaderViews.get(viewType), mInnerAdapter.getClickHolder())
+            NoViewHolder noViewHolder = new NoViewHolder.Builder(mHeaderViews.get(viewType), mInnerAdapter.getClickHolder())
                     .initView(holder.getConvertView().getTag(R.id.tag_data_holder))
                     .build();
             getViewHolderConvertor().put(holder, noViewHolder);
@@ -83,7 +83,7 @@ public class NoHeaderAndFooterWrapper extends NoRvAdapter
         } else if (mFootViews.get(viewType) != null)
         {
             ViewHolder holder = ViewHolder.createViewHolder(parent.getContext(), mFootViews.get(viewType));
-            NoViewHolder noViewHolder = new NoViewHolder.Factory(mFootViews.get(viewType), mInnerAdapter.getClickHolder())
+            NoViewHolder noViewHolder = new NoViewHolder.Builder(mFootViews.get(viewType), mInnerAdapter.getClickHolder())
                     .initView(holder.getConvertView().getTag(R.id.tag_data_holder))
                     .build();
             getViewHolderConvertor().put(holder, noViewHolder);
